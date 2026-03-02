@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WETWISE — Environmental Intelligence Platform</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+
+<link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body>
+
+<!-- ═══ BG CANVAS ═══ -->
+<div class="bg-wrap"><canvas id="bgCanvas"></canvas></div>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <!-- ADD THIS BUTTON -->
+    <button id="loginThemeBtn" onclick="toggleLoginTheme()" style="position:absolute;top:1rem;right:1rem;width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t1)">
+      <svg id="loginThemeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+    
+    <div class="login-logo">
+      <img src="wetwise_logo.png" alt="WETWISE">
+    </div>
+    <div class="input-group">
+      <label>Select Role</label>
+      <div class="role-pills">
+        <div class="role-pill active" data-role="admin">Admin</div>
+        <div class="role-pill" data-role="partner">Partner</div>
+        <div class="role-pill" data-role="public">Public</div>
+      </div>
+    </div>
+    <div class="input-group">
+      <label>Email</label>
+      <input type="email" id="loginEmail" value="user@wetwise.eu" placeholder="you@wetwise.eu">
+    </div>
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="loginPass" value="••••••••" placeholder="Password">
+    </div>
+    <button class="btn-login" id="btnLogin">Sign In</button>
+  </div>
+</div>
+
+<!-- ═══ APP SHELL ═══ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+ <div class="sidebar-brand">
+  <div class="brand-logo">
+    <img src="wetwise_logo.png" alt="WETWISE" class="logo-full">
+    <img src="wetwise-icon.png" alt="W" class="logo-compact">
+  </div>
+</div>
+    <div class="nav" id="sideNav">
+      <div class="nav-section-label">Monitoring</div>
+      <div class="nav-item active" data-page="overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Overview</span>
+      </div>
+      <div class="nav-item" data-page="satellite">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
+        <span>Satellite</span>
+      </div>
+      <div class="nav-item" data-page="weather">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59a2 2 0 1 1 2.82 2.83L4 14H2v-2l7.59-7.41z"/><path d="M3 21h18M3 10h2M5 6l2-2M21 10h-2M21 6l-2-2"/></svg>
+        <span>Weather</span>
+      </div>
+      <div class="nav-item" data-page="water">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10c0-3.5-2.5-6.5-6-8.5V2"/><path d="M12 22c-5.523 0-10-4.477-10-10c0-3.5 2.5-6.5 6-8.5V2"/></svg>
+        <span>Water Quality</span>
+      </div>
+      <div class="nav-item" data-page="soil">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22V8"/><path d="M12 8C12 6 10 4 7 4s-5 2-5 4 2 4 5 4"/><path d="M12 8c0-2 2-4 5-4s5 2 5 4-2 4-5 4"/></svg>
+        <span>Soil Data</span>
+      </div>
+      <div class="nav-item" data-page="correlation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+        <span>Correlation</span>
+      </div>
+
+      <div class="nav-section-label">Analysis</div>
+      <div class="nav-item" data-page="alerts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        <span>Alerts</span><span class="badge" id="alertCount">3</span>
+      </div>
+      <div class="nav-item" data-page="predictions">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <span>Predictions</span>
+      </div>
+
+      <div class="nav-section-label" id="adminSectionLabel">Administration</div>
+      <div class="nav-item" data-page="sensors" id="navSensors">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><line x1="12" y1="12" x2="19" y2="5"/><line x1="12" y1="12" x2="5" y2="19"/></svg>
+        <span>Sensor Mgmt</span>
+      </div>
+      <div class="nav-item" data-page="upload" id="navUpload">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>Image Upload</span>
+      </div>
+      <div class="nav-item" data-page="users" id="navUsers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>User Management</span>
+      </div>
+    </div>
+ <div class="sidebar-footer">
+  <div class="user-row" id="userRow">
+    <div class="avatar" id="avatarInitial">A</div>
+    <div class="user-info">
+      <div class="u-name" id="userName">Administrator</div>
+      <div class="u-role" id="userRoleLabel">Admin</div>
+    </div>
+  </div>
+  <!-- ADD LOGOUT BUTTON HERE -->
+<button class="btn btn-sm" onclick="handleLogout()" style="width:100%;margin-top:0.5rem;display:flex;align-items:center;justify-content:center;gap:0.4rem;font-size:0.8rem">
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+</button>
+</div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main" id="mainArea">
+    <!-- TOPBAR -->
+    <div style="display:flex;flex-direction:column;height:100%">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="collapse-btn" id="collapseBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <span class="topbar-title" id="topbarTitle">Overview</span>
+        </div>
+        <div class="topbar-right">
+          <!-- site selector in topbar -->
+          <select id="siteSelector" style="padding:.42rem .75rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:.82rem;font-family:inherit;cursor:pointer">
+            <option value="marsala">Stagnone di Marsala</option>
+            <option value="vendicari">Riserva Naturale di Vendicari</option>
+            <option value="marsaxlokk">Marsaxlokk</option>
+          </select>
+          <button class="topbar-btn" id="notifBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-dot"></span></button>
+          <button class="topbar-btn" id="themeBtn"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+        </div>
+      </div>
+
+      <!-- CONTENT PAGES -->
+      <div class="content" style="flex:1;overflow-y:auto">
+
+        <!-- ═══ OVERVIEW ═══ -->
+        <div class="page active" id="page-overview">
+          <div class="section-head">
+            <div><h2>Overview</h2><p>Real-time monitoring across all WETWISE pilot sites</p></div>
+            <div class="section-head-right"><button class="btn btn-primary btn-sm" id="btnExportOverview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button></div>
+          </div>
+          <div class="alert-strip" id="alertStrip">
+            <div class="a-dot"></div>
+            <div class="a-txt"><strong>Alert:</strong> Turbidity exceeded threshold (12.4 NTU) at Marsala Zone A3. Review recommended.</div>
+          </div>
+          <!-- Key metrics -->
+          <div class="metrics-row" id="overviewMetrics"></div>
+          <!-- Charts row -->
+          <div class="g12">
+            <div class="card c8">
+              <div class="card-head"><span class="card-title">Water Quality — 24h</span><span class="card-badge">Live</span></div>
+              <div class="chart-box"><canvas id="chartWater24"></canvas></div>
+            </div>
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">Live Data Stream</span><span class="card-badge">Live</span></div>
+              <div class="stream" id="liveStream"></div>
+            </div>
+          </div>
+          <div class="g12 mt2">
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">Wind Pattern</span></div>
+              <div class="chart-box"><canvas id="chartWindOverview"></canvas></div>
+            </div>
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">Soil Nutrients (NPK)</span></div>
+              <div class="chart-box"><canvas id="chartNPK"></canvas></div>
+            </div>
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">Posidonia Health</span></div>
+              <div class="chart-box"><canvas id="chartPosidonia"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ SATELLITE ═══ -->
+        <div class="page" id="page-satellite">
+          <div class="section-head">
+            <div><h2>Satellite Imaging</h2><p>SIMBAD processed Sentinel-2 imagery</p></div>
+            <div class="section-head-right">
+              <select id="satType" style="padding:.42rem .75rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:.82rem;font-family:inherit;cursor:pointer">
+                <option value="posidonia">Posidonia Oceanica Map</option>
+                <option value="turbidity">Turbidity Map</option>
+              </select>
+            </div>
+          </div>
+          <div class="g12">
+            <div class="card c8">
+              <div class="card-head"><span class="card-title" id="satTitle">Posidonia Oceanica Map</span><span class="card-badge">SIMBAD</span></div>
+              <div class="sat-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <div class="sat-label">Sentinel-2 Processed Image</div>
+                <div class="sat-sub">Image processed by SIMBAD platform. Awaiting latest acquisition or upload.</div>
+                <div class="sat-meta">
+                  <span class="tag">Resolution: 10m</span>
+                  <span class="tag">Cloud Cover: &lt;5%</span>
+                  <span class="tag">Bands: 13 MSI</span>
+                  <span class="tag">Last: 2025-01-28</span>
+                </div>
+              </div>
+            </div>
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">Image Metadata</span></div>
+              <div style="display:flex;flex-direction:column;gap:.55rem" id="satMeta">
+                <!-- populated by JS -->
+              </div>
+            </div>
+          </div>
+          <!-- health index bar -->
+          <div class="g12 mt2">
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">Posidonia Coverage by Zone</span></div>
+              <div class="chart-box"><canvas id="chartSatZones"></canvas></div>
+            </div>
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">Turbidity Distribution</span></div>
+              <div class="chart-box"><canvas id="chartTurbDist"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ WEATHER ═══ -->
+        <div class="page" id="page-weather">
+          <div class="section-head"><div><h2>Weather Station</h2><p>METOS5 real-time data & 7-day forecast</p></div></div>
+          <div class="metrics-row" id="weatherMetrics"></div>
+          <div class="g12">
+            <div class="card c8">
+              <div class="card-head"><span class="card-title">Temperature & Humidity — 48h</span></div>
+              <div class="chart-box"><canvas id="chartTempHum"></canvas></div>
+            </div>
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">Wind Rose</span></div>
+              <div class="chart-box"><canvas id="chartWindRose"></canvas></div>
+            </div>
+          </div>
+          <div class="card mt2">
+            <div class="card-head"><span class="card-title">7-Day Forecast</span><span class="card-badge">METOS5</span></div>
+            <div class="forecast-row" id="forecastRow"></div>
+          </div>
+          <div class="g12 mt2">
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">Solar Radiation & Et0</span></div>
+              <div class="chart-box"><canvas id="chartSolar"></canvas></div>
+            </div>
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">Precipitation</span></div>
+              <div class="chart-box"><canvas id="chartPrecip"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ WATER QUALITY ═══ -->
+        <div class="page" id="page-water">
+          <div class="section-head"><div><h2>Water Quality</h2><p>In-situ sensor network — real-time parameters</p></div><div class="section-head-right"><button class="btn btn-primary btn-sm">Export CSV</button></div></div>
+          <div class="metrics-row" id="waterMetrics"></div>
+          <div class="g12">
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">pH & Dissolved Oxygen</span><span class="card-badge">24h</span></div>
+              <div class="chart-box"><canvas id="chartPhDo"></canvas></div>
+            </div>
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">EC, Salinity & TDS</span><span class="card-badge">24h</span></div>
+              <div class="chart-box"><canvas id="chartEcSal"></canvas></div>
+            </div>
+          </div>
+          <div class="g12 mt2">
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">ORP</span></div>
+              <div class="chart-box"><canvas id="chartOrp"></canvas></div>
+            </div>
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">Ammonia & Nitrite</span></div>
+              <div class="chart-box"><canvas id="chartAmNi"></canvas></div>
+            </div>
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">Turbidity</span></div>
+              <div class="chart-box"><canvas id="chartTurb"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ SOIL ═══ -->
+        <div class="page" id="page-soil">
+          <div class="section-head"><div><h2>Soil Monitoring</h2><p>IRRIGOPTIMAL® 7-in-1 sensor array</p></div></div>
+          <div class="metrics-row" id="soilMetrics"></div>
+          <div class="g12">
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">Moisture & Temperature</span><span class="card-badge">24h</span></div>
+              <div class="chart-box"><canvas id="chartSoilMT"></canvas></div>
+            </div>
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">EC & Salinity</span><span class="card-badge">24h</span></div>
+              <div class="chart-box"><canvas id="chartSoilEC"></canvas></div>
+            </div>
+          </div>
+          <div class="g12 mt2">
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">NPK Nutrients Over Time</span></div>
+              <div class="chart-box"><canvas id="chartNPKTime"></canvas></div>
+            </div>
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">Water Potential (Tension)</span></div>
+              <div class="chart-box"><canvas id="chartTension"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ CORRELATION ═══ -->
+        <div class="page" id="page-correlation">
+          <div class="section-head"><div><h2>Data Correlation</h2><p>Cross-sensor parameter analysis</p></div></div>
+          <div class="g12">
+            <div class="card c7">
+              <div class="card-head"><span class="card-title">Correlation Matrix</span><span class="card-badge">Heat-map</span></div>
+              <div id="heatmapContainer" style="overflow-x:auto"></div>
+            </div>
+            <div class="card c5">
+              <div class="card-head"><span class="card-title">Turbidity vs Rainfall</span></div>
+              <div class="chart-box"><canvas id="chartCorr1"></canvas></div>
+            </div>
+          </div>
+          <div class="g12 mt2">
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">Soil Moisture vs Water Potential</span></div>
+              <div class="chart-box"><canvas id="chartCorr2"></canvas></div>
+            </div>
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">DO vs Temperature</span></div>
+              <div class="chart-box"><canvas id="chartCorr3"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ ALERTS ═══ -->
+        <div class="page" id="page-alerts">
+          <div class="section-head"><div><h2>Alerts & Thresholds</h2><p>Parameter-based notification system</p></div><div class="section-head-right"><button class="btn btn-primary btn-sm" id="btnAddAlert">+ New Alert Rule</button></div></div>
+          <div class="g12">
+            <div class="card c8">
+              <div class="card-head"><span class="card-title">Active Alerts</span></div>
+              <div class="tbl-wrap" id="alertsTable"></div>
+            </div>
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">Alert Summary</span></div>
+              <div class="chart-box"><canvas id="chartAlertSummary"></canvas></div>
+            </div>
+          </div>
+          <div class="card mt2">
+            <div class="card-head"><span class="card-title">Threshold Rules</span></div>
+            <div class="tbl-wrap" id="thresholdTable"></div>
+          </div>
+        </div>
+
+        <!-- ═══ PREDICTIONS ═══ -->
+        <div class="page" id="page-predictions">
+          <div class="section-head"><div><h2>Predictions</h2><p>IRRIGOPTIMAL® AI-based analytics</p></div></div>
+          <div class="metrics-row" id="predMetrics"></div>
+          <div class="g12">
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">Water Needs Forecast</span><span class="card-badge">AI</span></div>
+              <div class="chart-box"><canvas id="chartPredWater"></canvas></div>
+            </div>
+            <div class="card c6">
+              <div class="card-head"><span class="card-title">Vegetation Health Forecast</span><span class="card-badge">AI</span></div>
+              <div class="chart-box"><canvas id="chartPredVeg"></canvas></div>
+            </div>
+          </div>
+          <div class="card mt2">
+            <div class="card-head"><span class="card-title">AI Recommendations</span></div>
+            <div id="aiRecommendations" style="display:flex;flex-direction:column;gap:.7rem"></div>
+          </div>
+        </div>
+
+        <!-- ═══ SENSOR MGMT (admin) ═══ -->
+        <div class="page" id="page-sensors">
+          <div class="section-head"><div><h2>Sensor Management</h2><p>Deploy, configure & monitor all in-situ sensors</p></div><div class="section-head-right"><button class="btn btn-primary btn-sm">+ Add Sensor</button></div></div>
+          <div class="tbl-wrap" id="sensorTable"></div>
+        </div>
+
+        <!-- ═══ IMAGE UPLOAD (admin) ═══ -->
+        <div class="page" id="page-upload">
+          <div class="section-head"><div><h2>Image Upload</h2><p>Push satellite images to SIMBAD for processing</p></div></div>
+          <div class="g12">
+            <div class="card c8">
+              <div class="card-head"><span class="card-title">Upload to SIMBAD</span><span class="card-badge">Admin</span></div>
+              <div style="display:flex;gap:1rem;margin-bottom:1rem">
+                <select style="flex:1;padding:.5rem .75rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:.82rem;font-family:inherit">
+                  <option>Stagnone di Marsala</option><option>Riserva Naturale di Vendicari</option><option>Marsaxlokk</option>
+                </select>
+                <select style="flex:1;padding:.5rem .75rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:.82rem;font-family:inherit">
+                  <option>Posidonia Oceanica</option><option>Turbidity</option>
+                </select>
+              </div>
+              <div class="upload-area" id="uploadArea">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <p>Drag & drop Sentinel-2 image here</p>
+                <span>GeoTIFF, JP2 — max 500 MB</span>
+                <input type="file" id="fileInput" style="display:none" accept=".tif,.tiff,.jp2,.img">
+              </div>
+            </div>
+            <div class="card c4">
+              <div class="card-head"><span class="card-title">Processing Queue</span></div>
+              <div id="processingQueue" style="display:flex;flex-direction:column;gap:.55rem"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ USER MGMT (admin) ═══ -->
+        <div class="page" id="page-users">
+          <div class="section-head"><div><h2>User Management</h2><p>Manage partner & public access</p></div><div class="section-head-right"><button class="btn btn-primary btn-sm">+ Invite User</button></div></div>
+          <div class="tbl-wrap" id="userTable"></div>
+        </div>
+
+      </div><!-- /content -->
+    </div>
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let currentRole = 'admin';
+let currentSite = 'marsala';
+const siteNames = {marsala:'Stagnone di Marsala',vendicari:'Riserva Naturale di Vendicari',marsaxlokk:'Marsaxlokk'};
+
+// ═══════════════════════════════════════════
+// BACKGROUND CANVAS — satellite orbit + ocean waves
+// ═══════════════════════════════════════════
+(function(){  
+  const c=document.getElementById('bgCanvas'),ctx=c.getContext('2d');
+  let W,H,particles=[],t=0;
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+  resize();window.addEventListener('resize',resize);
+
+  // orbit rings data
+  const orbits=[
+    {cx:.5,cy:.45,rx:.38,ry:.18,angle:-15,speed:.0004,color:'rgba(34,211,238,.18)'},
+    {cx:.5,cy:.45,rx:.5,ry:.28,angle:12,speed:.00025,color:'rgba(34,211,238,.11)'},
+    {cx:.5,cy:.45,rx:.62,ry:.38,angle:-8,speed:.00015,color:'rgba(59,130,246,.09)'},
+    {cx:.48,cy:.5,rx:.72,ry:.45,angle:5,speed:.0001,color:'rgba(20,184,166,.07)'}
+  ];
+
+  // satellite dots on orbits
+  const sats=orbits.map((o,i)=>({orbit:i,phase:Math.random()*Math.PI*2,size:i<2?3:2}));
+
+  // floating ocean particles
+  for(let i=0;i<60;i++) particles.push({x:Math.random(),y:.55+Math.random()*.45,vx:(Math.random()-.5)*.0003,vy:Math.random()*.00015,r:1+Math.random()*2,a:.1+Math.random()*.15});
+
+  function drawOrbit(o,time){
+    ctx.save();
+    ctx.translate(W*o.cx,H*o.cy);
+    ctx.rotate(o.angle*Math.PI/180);
+    ctx.scale(1,.55); // flatten into ellipse
+    ctx.beginPath();
+    ctx.arc(0,0,W*o.rx,0,Math.PI*2);
+    ctx.strokeStyle=o.color;
+    ctx.lineWidth=1;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawSat(sat,time){
+    const o=orbits[sat.orbit];
+    const phase=sat.phase+time*o.speed;
+    ctx.save();
+    ctx.translate(W*o.cx,H*o.cy);
+    ctx.rotate(o.angle*Math.PI/180);
+    const x=W*o.rx*Math.cos(phase);
+    const y=W*o.rx*Math.sin(phase)*.55;
+    // glow trail
+    const grad=ctx.createRadialGradient(x,y,0,x,y,18);
+    grad.addColorStop(0,'rgba(34,211,238,.7)');
+    grad.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();
+    // dot
+    ctx.beginPath();ctx.arc(x,y,sat.size,0,Math.PI*2);ctx.fillStyle='rgba(34,211,238,1)';ctx.fill();
+    ctx.restore();
+  }
+
+  function drawOcean(time){
+    const dark=document.documentElement.getAttribute('data-theme')==='dark';
+    // base ocean gradient at bottom
+    const grd=ctx.createLinearGradient(0,H*.5,0,H);
+    grd.addColorStop(0,'transparent');
+    grd.addColorStop(.5,dark?'rgba(8,145,178,.04)':'rgba(8,145,178,.03)');
+    grd.addColorStop(1,dark?'rgba(34,211,238,.06)':'rgba(34,211,238,.04)');
+    ctx.fillStyle=grd;ctx.fillRect(0,H*.5,W,H*.5);
+
+    // wave lines
+    for(let i=0;i<6;i++){
+      const yBase=H*(.62+i*.06);
+      const amp=8-i*1.2;
+      const freq=.012-i*.0015;
+      const off=time*(.3+i*.08);
+      ctx.beginPath();
+      for(let x=0;x<=W;x+=4){
+        const y=yBase+Math.sin((x*freq)+off)*amp+Math.sin((x*freq*1.7)+off*1.3)*amp*.4;
+        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle=dark?`rgba(34,211,238,${.06-i*.008})`:`rgba(8,145,178,${.05-i*.006})`;
+      ctx.lineWidth=1.2;
+      ctx.stroke();
+    }
+  }
+
+  function drawParticles(time){
+    const dark=document.documentElement.getAttribute('data-theme')==='dark';
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=1;if(p.x>1)p.x=0;
+      if(p.y>1)p.y=.56;
+      ctx.beginPath();ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+      ctx.fillStyle=dark?`rgba(34,211,238,${p.a})`:`rgba(8,145,178,${p.a*.8})`;
+      ctx.fill();
+    });
+  }
+
+  // grid
+  function drawGrid(){
+    const dark=document.documentElement.getAttribute('data-theme')==='dark';
+    ctx.strokeStyle=dark?'rgba(34,211,238,.035)':'rgba(8,145,178,.04)';
+    ctx.lineWidth=.7;
+    const sz=60;
+    for(let x=0;x<W;x+=sz){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+    for(let y=0;y<H;y+=sz){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+  }
+
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    t+=16;
+    drawGrid();
+    orbits.forEach(o=>drawOrbit(o,t));
+    sats.forEach(s=>drawSat(s,t));
+    drawOcean(t*.001);
+    drawParticles(t*.001);
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ═══════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════
+document.querySelectorAll('.role-pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.role-pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+  });
+});
+document.getElementById('btnLogin').addEventListener('click',()=>{
+  currentRole=document.querySelector('.role-pill.active').dataset.role;
+  document.getElementById('loginScreen').classList.add('gone');
+  setTimeout(()=>{document.getElementById('loginScreen').style.display='none'},400);
+  document.getElementById('app').classList.add('visible');
+  applyRole(currentRole);
+  initAllPages();
+  updateTime();setInterval(updateTime,1000);
+  startLiveStream();
+  setInterval(()=>tickMetrics(),4000);
+});
+
+// ═══════════════════════════════════════════
+// ROLE APPLY
+// ═══════════════════════════════════════════  
+// ─── LOGOUT FUNCTION ───  
+// ─── LOGIN THEME TOGGLE ───
+function toggleLoginTheme() {
+  const html = document.documentElement;
+  const currentTheme = html.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', newTheme);
+  
+  // Update icon
+  const icon = document.getElementById('loginThemeIcon');
+  if (newTheme === 'light') {
+    icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  } else {
+    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  }
+}
+function handleLogout() {
+  // Hide app and show login
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginScreen').classList.remove('gone');
+  
+  // Reset to default state
+  currentRole = 'admin';
+  currentSite = 'marsala';
+  
+  // Reset login form
+  document.getElementById('loginEmail').value = 'user@wetwise.eu';
+  document.getElementById('loginPass').value = '••••••••';
+  
+  // Clear any active states
+  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+  document.querySelector('.nav-item[data-page="overview"]').classList.add('active');
+}
+function applyRole(role){
+  const isAdmin=role==='admin';
+  const isPartner=role==='partner';
+  document.getElementById('navSensors').style.display=isAdmin?'flex':'none';
+  document.getElementById('navUpload').style.display=isAdmin?'flex':'none';
+  document.getElementById('navUsers').style.display=isAdmin?'flex':'none';
+  document.getElementById('adminSectionLabel').style.display=isAdmin?'block':'none';
+  document.getElementById('userName').textContent=isAdmin?'Administrator':isPartner?'Partner User':'Public Viewer';
+  document.getElementById('userRoleLabel').textContent=role.charAt(0).toUpperCase()+role.slice(1);
+  document.getElementById('avatarInitial').textContent=role.charAt(0).toUpperCase();
+  document.getElementById('btnExportOverview').style.display=(isAdmin||isPartner)?'inline-flex':'none';
+}
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+    item.classList.add('active');
+    const page=item.dataset.page;
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    const el=document.getElementById('page-'+page);
+    if(el)el.classList.add('active');
+    const titles={overview:'Overview',satellite:'Satellite Imaging',weather:'Weather Station',water:'Water Quality',soil:'Soil Monitoring',correlation:'Data Correlation',alerts:'Alerts',predictions:'Predictions',sensors:'Sensor Management',upload:'Image Upload',users:'User Management'};
+    document.getElementById('topbarTitle').textContent=titles[page]||page;
+  });
+});
+
+// Sidebar collapse
+document.getElementById('collapseBtn').addEventListener('click',()=>{
+  document.getElementById('sidebar').classList.toggle('collapsed');
+});
+
+// Site selector - UPDATE THIS
+document.getElementById('siteSelector').addEventListener('change', function() {
+  currentSite = this.value;
+  
+  // Check which page is active and refresh it
+  const activePage = document.querySelector('.page.active');
+  if (activePage) {
+    const pageId = activePage.id;
+    
+    // Refresh the current page with new site data
+    if (pageId === 'page-weather') {
+      buildWeather();
+    } else if (pageId === 'page-correlation') {
+      buildCorrelation();
+    } else if (pageId === 'page-overview') {
+      buildOverview();
+    } else if (pageId === 'page-water') {
+      buildWaterQuality();
+    } else if (pageId === 'page-soil') {
+      buildSoil();
+    } else if (pageId === 'page-satellite') {
+      buildSatellite(); // This will reset the map to placeholder
+    } else if (pageId === 'page-predictions') {
+      buildPredictions();
+    }
+  }
+});
+
+
+// ═══════════════════════════════════════════
+// TIME
+// ═══════════════════════════════════════════
+function updateTime(){
+  const n=new Date();
+  document.querySelector('.t-time').textContent=n.toLocaleTimeString('en-GB',{hour12:false});
+  document.querySelector('.t-date').textContent=n.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
+
+// ═══════════════════════════════════════════
+// THEME TOGGLE
+// ═══════════════════════════════════════════
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  const html=document.documentElement;
+  const t=html.getAttribute('data-theme')==='dark'?'light':'dark';
+  html.setAttribute('data-theme',t);
+  updateAllChartColors();
+});
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+function isDark(){return document.documentElement.getAttribute('data-theme')==='dark'}
+function tv(dark,light){return isDark()?dark:light}
+function rnd(base,range){return+(base+(Math.random()-.5)*range).toFixed(2)}
+function timeLabels(n,suffix='h'){
+  const now=new Date();
+  return Array.from({length:n},(_,i)=>{
+    const h=new Date(now.getTime()-(n-1-i)*3600000);
+    return h.getHours()+':00';
+  });
+}
+function dayLabels(n){
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const now=new Date();
+  return Array.from({length:n},(_,i)=>{
+    const d=new Date(now.getTime()+(i-1)*86400000);
+    return days[d.getDay()];
+  });
+}
+
+// ═══════════════════════════════════════════
+// CHART DEFAULTS & COLOR UPDATE
+// ═══════════════════════════════════════════
+const allCharts={};
+function cDef(){
+  Chart.defaults.color=tv('rgba(255,255,255,.55)','rgba(15,30,46,.5)');
+  Chart.defaults.borderColor=tv('rgba(34,211,238,.1)','rgba(8,145,178,.12)');
+  Chart.defaults.font.family="'Inter',sans-serif";
+  Chart.defaults.font.size=11;
+}
+cDef();
+
+function updateAllChartColors(){
+  cDef();
+  Object.values(allCharts).forEach(ch=>{
+    if(!ch)return;
+    try{
+      if(ch.options.scales?.x)ch.options.scales.x.ticks.color=tv('rgba(255,255,255,.45)','rgba(15,30,46,.45)');
+      if(ch.options.scales?.y)ch.options.scales.y.ticks.color=tv('rgba(255,255,255,.45)','rgba(15,30,46,.45)');
+      if(ch.options.scales?.y?.grid)ch.options.scales.y.grid.color=tv('rgba(34,211,238,.08)','rgba(8,145,178,.1)');
+      if(ch.options.scales?.r?.grid)ch.options.scales.r.grid.color=tv('rgba(34,211,238,.12)','rgba(8,145,178,.14)');
+      ch.update();
+    }catch(e){}
+  });
+}
+
+function makeChart(id,config){
+  const el=document.getElementById(id);
+  if(!el)return null;
+  if(allCharts[id]){allCharts[id].destroy()}
+  const ch=new Chart(el.getContext('2d'),config);
+  allCharts[id]=ch;
+  return ch;
+}
+
+// ═══════════════════════════════════════════
+// METRIC CARD BUILDER
+// ═══════════════════════════════════════════
+function metricHTML(icon,label,val,unit,delta,deltaClass){
+  return `<div class="metric">
+    <div class="metric-top">
+      <div class="metric-icon" style="background:var(--cyan2)">${icon}</div>
+      <div class="metric-dot"></div>
+    </div>
+    <div class="metric-lbl">${label}</div>
+    <div class="metric-val">${val}<span class="metric-unit">${unit}</span></div>
+    <div class="metric-delta ${deltaClass}">${delta}</div>
+  </div>`;
+}
+const icons={
+  temp:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>`,
+  drop:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10 0-2.5-1-5-3-7L12 2 5 5c-2 2-3 4.5-3 7 0 5.523 4.477 10 10 10z"/></svg>`,
+  wind:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M9.59 4.59a2 2 0 1 1 2.82 2.83L4 14H2v-2l7.59-7.41z"/><path d="M3 10h2"/></svg>`,
+  sun:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>`,
+  rain:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M4 15.5C2.8 14.6 2 13 2 11a5 5 0 0 1 10 0c0 2-1 3.5-2.5 4.5"/><line x1="7" y1="18" x2="7" y2="21"/><line x1="11" y1="18" x2="11" y2="21"/></svg>`,
+  soil:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M12 22V8"/><path d="M12 8C12 6 10 4 7 4s-5 2-5 4 2 4 5 4"/></svg>`,
+  ph:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`,
+  ox:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>`,
+  ec:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+  npk:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M12 22V8"/><path d="M12 8C12 6 10 4 7 4s-5 2-5 4 2 4 5 4"/><path d="M12 8c0-2 2-4 5-4s5 2 5 4-2 4-5 4"/></svg>`,
+  ai:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+  alert:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>`,
+  hum:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10 0-2.5-1-5-3-7L12 2 5 5c-2 2-3 4.5-3 7 0 5.523 4.477 10 10 10z"/></svg>`,
+  turb:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
+};
+
+// ═══════════════════════════════════════════
+// INIT ALL PAGES — called once after login
+// ═══════════════════════════════════════════
+function initAllPages(){
+  buildOverview();
+  buildSatellite();
+  buildWeather();
+  buildWaterQuality();
+  buildSoil();
+  buildCorrelation();
+  buildAlerts();
+  buildPredictions();
+  buildSensorTable();
+  buildUploadQueue();
+  buildUserTable();
+}
+
+// ─── LIVE STREAM ─── 
+function startLiveStream(){
+  const el=document.getElementById('liveStream');
+  const msgs=[
+    {src:'SIMBAD',msg:'Sentinel-2 image acquired — cloud cover 3.2%'},
+    {src:'IRRIGOPTIMAL',msg:'Soil moisture update — Zone B nominal'},
+    {src:'METOS5',msg:'Wind direction shift detected: SW → W'},
+    {src:'SENSORS',msg:'Water pH sensor calibration reminder — Marsala #4'},
+    {src:'SIMBAD',msg:'Posidonia map processing complete'},
+    {src:'IRRIGOPTIMAL',msg:'NPK readings updated across all sites'},
+    {src:'METOS5',msg:'Precipitation forecast: 2.4 mm in 6h'},
+    {src:'SENSORS',msg:'DO sensor 7 — battery level 34%'},
+    {src:'SIMBAD',msg:'Turbidity band analysis started'},
+    {src:'IRRIGOPTIMAL',msg:'AI prediction model retrained with latest data'},
+  ];
+  let idx=0;
+  function addMsg(){
+    const m=msgs[idx%msgs.length];idx++;
+    const now=new Date();
+    const t=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+    el.insertAdjacentHTML('afterbegin',`<div class="stream-item"><div class="stream-row"><span class="stream-src">${m.src}</span><span class="stream-time">${t}</span></div><div class="stream-msg">${m.msg}</div></div>`);
+    if(el.children.length>6)el.removeChild(el.lastChild);
+  }
+  addMsg();addMsg();addMsg();
+  setInterval(addMsg,5000);
+}
+
+// ─── TICK METRICS (simulate live) ───
+function tickMetrics(){
+  const maps={metricTemp:[22.4,.5],metricTurb:[4.2,.8],metricPh:[8.1,.15],metricDo:[7.8,.3],metricSal:[35.2,.2],metricWind:[12.5,2.5]};
+  Object.entries(maps).forEach(([id,[base,rng]])=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=rnd(base,rng);
+  });
+}
+
+// ═══════════════════════════════════════════
+// PAGE BUILDERS
+// ═══════════════════════════════════════════
+
+// ─── OVERVIEW (SITE-RESPONSIVE) ───
+function buildOverview(){
+  // Site-specific data
+  const overviewData = {
+    marsala: {
+      waterTemp: 22.4, waterTempDelta: '↑ +0.3°C today',
+      turbidity: 4.2, turbidityStatus: '↑ Within range',
+      ph: 8.1, phStatus: '→ Stable',
+      do: 7.8, doStatus: '↑ +0.4 today',
+      salinity: 35.2, salinityStatus: '→ Stable',
+      wind: 12.5, windStatus: '↓ −2.1 km/h',
+      alertMsg: 'Turbidity exceeded threshold (12.4 NTU) at Marsala Zone A3. Review recommended.'
+    },
+    vendicari: {
+      waterTemp: 21.8, waterTempDelta: '↑ +0.5°C today',
+      turbidity: 3.8, turbidityStatus: '→ Normal',
+      ph: 8.0, phStatus: '↓ −0.1 today',
+      do: 8.2, doStatus: '↑ +0.6 today',
+      salinity: 34.8, salinityStatus: '↓ −0.2 today',
+      wind: 14.8, windStatus: '↑ +1.5 km/h',
+      alertMsg: 'Soil moisture below optimal range at Vendicari Zone B2. Irrigation recommended.'
+    },
+    marsaxlokk: {
+      waterTemp: 23.1, waterTempDelta: '↑ +0.8°C today',
+      turbidity: 5.1, turbidityStatus: '↑ Elevated',
+      ph: 8.2, phStatus: '→ Stable',
+      do: 7.5, doStatus: '→ Stable',
+      salinity: 35.6, salinityStatus: '↑ +0.3 today',
+      wind: 16.2, windStatus: '↑ +3.2 km/h',
+      alertMsg: 'Wind speed elevated (42 km/h) at Marsaxlokk. Monitor water mixing patterns.'
+    }
+  };
+
+  const data = overviewData[currentSite] || overviewData.marsala;
+
+  document.getElementById('overviewMetrics').innerHTML =
+    metricHTML(icons.temp, 'Water Temp', `<span id="metricTemp">${data.waterTemp}</span>`, '°C', data.waterTempDelta, 'up') +
+    metricHTML(icons.turb, 'Turbidity', `<span id="metricTurb">${data.turbidity}</span>`, 'NTU', data.turbidityStatus, data.turbidityStatus.includes('↑') ? 'up' : 'st') +
+    metricHTML(icons.ph, 'pH Level', `<span id="metricPh">${data.ph}</span>`, 'pH', data.phStatus, 'st') +
+    metricHTML(icons.ox, 'Dissolved O₂', `<span id="metricDo">${data.do}</span>`, 'mg/L', data.doStatus, 'up') +
+    metricHTML(icons.hum, 'Salinity', `<span id="metricSal">${data.salinity}</span>`, 'ppt', data.salinityStatus, 'st') +
+    metricHTML(icons.wind, 'Wind Speed', `<span id="metricWind">${data.wind}</span>`, 'km/h', data.windStatus, data.windStatus.includes('↓') ? 'dn' : 'up');
+
+  // Update alert message
+  document.querySelector('.alert-strip .a-txt').innerHTML = `<strong>Alert:</strong> ${data.alertMsg}`;
+
+  // Water 24h chart
+  makeChart('chartWater24', {
+    type: 'line',
+    data: {
+      labels: timeLabels(24),
+      datasets: [
+        {label: 'pH', data: Array.from({length: 24}, () => rnd(data.ph, 0.3)), borderColor: '#22d3ee', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0},
+        {label: 'DO (mg/L)', data: Array.from({length: 24}, () => rnd(data.do, 0.5)), borderColor: '#10b981', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0}
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode: 'index', intersect: false},
+      plugins: {legend: {labels: {boxWidth: 12, padding: 16}}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: false, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  // Wind pattern (site-specific)
+  const windPatterns = {
+    marsala: [15, 12, 8, 5, 10, 18, 22, 16],
+    vendicari: [12, 16, 10, 7, 14, 20, 18, 13],
+    marsaxlokk: [18, 14, 9, 6, 11, 16, 24, 20]
+  };
+
+  makeChart('chartWindOverview', {
+    type: 'polarArea',
+    data: {
+      labels: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
+      datasets: [{
+        data: windPatterns[currentSite] || windPatterns.marsala,
+        backgroundColor: Array.from({length: 8}, (_, i) => `rgba(34,211,238,${0.35 + i * 0.04})`),
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {r: {beginAtZero: true, ticks: {backdropColor: 'transparent'}, grid: {color: tv('rgba(34,211,238,.12)', 'rgba(8,145,178,.14)')}}},
+      plugins: {legend: {display: false}}
+    }
+  });
+
+  // NPK (site-specific)
+  const npkData = {
+    marsala: [450, 280, 520],
+    vendicari: [425, 265, 495],
+    marsaxlokk: [465, 295, 540]
+  };
+
+  makeChart('chartNPK', {
+    type: 'doughnut',
+    data: {
+      labels: ['Nitrogen', 'Phosphorus', 'Potassium'],
+      datasets: [{
+        data: npkData[currentSite] || npkData.marsala,
+        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: {legend: {position: 'bottom', labels: {boxWidth: 10, padding: 14}}}
+    }
+  });
+
+  // Posidonia health (site-specific)
+  const posidoniaData = {
+    marsala: [52, 24, 16, 8],
+    vendicari: [64, 20, 12, 4],
+    marsaxlokk: [48, 26, 18, 8]
+  };
+
+  makeChart('chartPosidonia', {
+    type: 'doughnut',
+    data: {
+      labels: ['Healthy', 'Moderate', 'Degraded', 'Critical'],
+      datasets: [{
+        data: posidoniaData[currentSite] || posidoniaData.marsala,
+        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e', '#6b7280'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {legend: {position: 'bottom', labels: {boxWidth: 10, padding: 12}}}
+    }
+  });
+}
+// ─── SATELLITE (SITE-RESPONSIVE) ───
+function buildSatellite(){
+  const satData = {
+    marsala: {
+      coverage: 'Stagnone di Marsala',
+      acquired: '2025-01-28 09:41 UTC',
+      cloudCover: '4.7%',
+      zones: [87, 72, 91, 65, 84],
+      turbDist: [18, 34, 28, 14, 6]
+    },
+    vendicari: {
+      coverage: 'Riserva Naturale di Vendicari',
+      acquired: '2025-01-26 10:15 UTC',
+      cloudCover: '3.2%',
+      zones: [92, 85, 88, 78, 90],
+      turbDist: [24, 38, 26, 10, 2]
+    },
+    marsaxlokk: {
+      coverage: 'Marsaxlokk',
+      acquired: '2025-01-27 09:52 UTC',
+      cloudCover: '6.1%',
+      zones: [78, 68, 82, 70, 76],
+      turbDist: [14, 30, 32, 18, 6]
+    }
+  };
+
+  const data = satData[currentSite] || satData.marsala;
+
+  const meta = [
+    {k: 'Platform', v: 'Sentinel-2A / 2B'},
+    {k: 'Resolution', v: '10m (B02, B03, B04, B08)'},
+    {k: 'Bands', v: '13 spectral MSI'},
+    {k: 'Acquired', v: data.acquired},
+    {k: 'Processing', v: 'SIMBAD v3.2'},
+    {k: 'Cloud Cover', v: data.cloudCover},
+    {k: 'Coverage', v: data.coverage},
+    {k: 'Output', v: 'Posidonia Oceanica Map'},
+  ];
+
+  document.getElementById('satMeta').innerHTML = meta.map(m => 
+    `<div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:.78rem;color:var(--t2);font-weight:600">${m.k}</span>
+      <span style="font-size:.78rem;font-weight:500">${m.v}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('satType').addEventListener('change', function() {
+    document.getElementById('satTitle').textContent = this.value === 'posidonia' ? 'Posidonia Oceanica Map' : 'Turbidity Map';
+  });
+
+  makeChart('chartSatZones', {
+    type: 'bar',
+    data: {
+      labels: ['Zone A', 'Zone B', 'Zone C', 'Zone D', 'Zone E'],
+      datasets: [{
+        label: 'Coverage %',
+        data: data.zones,
+        backgroundColor: data.zones.map(v => v > 85 ? '#10b981' : v > 70 ? '#f59e0b' : '#f43f5e'),
+        borderRadius: 5,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, max: 100, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  makeChart('chartTurbDist', {
+    type: 'bar',
+    data: {
+      labels: ['0-2', '2-5', '5-10', '10-20', '20+'],
+      datasets: [{
+        label: 'NTU Range',
+        data: data.turbDist,
+        backgroundColor: ['#10b981', '#10b981', '#f59e0b', '#f43f5e', '#f43f5e'],
+        borderRadius: 5,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+}
+
+// ─── WEATHER (SITE-RESPONSIVE) ───
+function buildWeather(){
+  // Site-specific weather data
+  const weatherData = {
+    marsala: {
+      airTemp: 24.1, airTempDelta: '+1.2°C',
+      humidity: 62, humidityDelta: '↓ −4%',
+      wind: 14.2, windDir: 'W',
+      precip: 0.0, precipStatus: '→ Clear',
+      solar: 680, solarStatus: '↑ Peak',
+      dewPoint: 14.8, dewPointStatus: '→ Stable',
+      tempRange: [21, 26], humRange: [55, 75],
+      windRose: [8, 14, 10, 6, 12, 20, 18, 11], // N,NE,E,SE,S,SW,W,NW
+      forecast: {
+        icons: ['☀️', '⛅', '🌤️', '🌧️', '⛈️', '🌤️', '☀️'],
+        hi: [26, 24, 22, 19, 21, 23, 27],
+        lo: [18, 17, 16, 14, 15, 17, 19],
+        prec: [0, 5, 12, 65, 78, 20, 0]
+      }
+    },
+    vendicari: {
+      airTemp: 22.8, airTempDelta: '+0.8°C',
+      humidity: 68, humidityDelta: '→ Stable',
+      wind: 16.5, windDir: 'SW',
+      precip: 0.0, precipStatus: '→ Clear',
+      solar: 645, solarStatus: '↑ High',
+      dewPoint: 16.2, dewPointStatus: '↑ +0.4°C',
+      tempRange: [20, 25], humRange: [60, 78],
+      windRose: [6, 10, 8, 9, 15, 24, 16, 8],
+      forecast: {
+        icons: ['🌤️', '☀️', '⛅', '🌧️', '⛈️', '🌤️', '☀️'],
+        hi: [25, 26, 23, 20, 19, 22, 26],
+        lo: [17, 18, 16, 15, 14, 16, 18],
+        prec: [10, 0, 8, 55, 70, 15, 5]
+      }
+    },
+    marsaxlokk: {
+      airTemp: 23.5, airTempDelta: '+0.5°C',
+      humidity: 65, humidityDelta: '↓ −2%',
+      wind: 18.7, windDir: 'NW',
+      precip: 0.0, precipStatus: '→ Clear',
+      solar: 710, solarStatus: '↑ Peak',
+      dewPoint: 15.4, dewPointStatus: '→ Stable',
+      tempRange: [21, 27], humRange: [58, 72],
+      windRose: [12, 8, 7, 5, 10, 14, 22, 18],
+      forecast: {
+        icons: ['☀️', '☀️', '🌤️', '⛅', '🌧️', '🌤️', '☀️'],
+        hi: [27, 28, 24, 22, 20, 23, 28],
+        lo: [19, 20, 17, 16, 15, 17, 20],
+        prec: [0, 0, 5, 20, 45, 12, 0]
+      }
+    }
+  };
+
+  const data = weatherData[currentSite] || weatherData.marsala;
+
+  // Build metrics
+  document.getElementById('weatherMetrics').innerHTML =
+    metricHTML(icons.temp, 'Air Temp', data.airTemp.toFixed(1), '°C', data.airTempDelta, 'up') +
+    metricHTML(icons.hum, 'Humidity', data.humidity, '%', data.humidityDelta, data.humidityDelta.includes('↓') ? 'dn' : 'st') +
+    metricHTML(icons.wind, 'Wind', data.wind.toFixed(1), 'km/h', `→ ${data.windDir}`, 'st') +
+    metricHTML(icons.rain, 'Precipitation', data.precip.toFixed(1), 'mm', data.precipStatus, 'st') +
+    metricHTML(icons.sun, 'Solar Rad.', data.solar, 'W/m²', data.solarStatus, 'up') +
+    metricHTML(icons.temp, 'Dew Point', data.dewPoint.toFixed(1), '°C', data.dewPointStatus, 'st');
+
+  // Temperature & Humidity chart
+  makeChart('chartTempHum', {
+    type: 'line',
+    data: {
+      labels: timeLabels(24),
+      datasets: [
+        {
+          label: 'Temperature °C',
+          data: Array.from({length: 24}, () => rnd(data.airTemp, 3)),
+          borderColor: '#f59e0b',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: false,
+          pointRadius: 0
+        },
+        {
+          label: 'Humidity %',
+          data: Array.from({length: 24}, () => rnd(data.humidity, 12)),
+          borderColor: '#3b82f6',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: false,
+          pointRadius: 0,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode: 'index'},
+      plugins: {legend: {labels: {boxWidth: 12, padding: 16}}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: false, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}},
+        y1: {position: 'right', beginAtZero: false, grid: {display: false}}
+      }
+    }
+  });
+
+  // Wind Rose chart
+  makeChart('chartWindRose', {
+    type: 'polarArea',
+    data: {
+      labels: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
+      datasets: [{
+        data: data.windRose,
+        backgroundColor: Array.from({length: 8}, (_, i) => `rgba(59,130,246,${0.25 + i * 0.05})`),
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          beginAtZero: true,
+          ticks: {backdropColor: 'transparent'},
+          grid: {color: tv('rgba(34,211,238,.12)', 'rgba(8,145,178,.14)')}
+        }
+      },
+      plugins: {legend: {display: false}}
+    }
+  });
+
+  // 7-Day Forecast
+  const fc = data.forecast;
+  document.getElementById('forecastRow').innerHTML = dayLabels(7).map((d, i) => 
+    `<div class="forecast-day">
+      <div class="f-day">${d}</div>
+      <div class="f-icon">${fc.icons[i]}</div>
+      <div class="f-hi">${fc.hi[i]}°</div>
+      <div class="f-lo">${fc.lo[i]}°</div>
+      <div class="f-prec">${fc.prec[i]}% rain</div>
+    </div>`
+  ).join('');
+
+  // Solar Radiation chart
+  makeChart('chartSolar', {
+    type: 'line',
+    data: {
+      labels: timeLabels(24),
+      datasets: [{
+        label: 'Solar W/m²',
+        data: Array.from({length: 24}, (_, i) => {
+          const h = i;
+          return h < 6 || h > 19 ? 0 : Math.sin((h - 6) / 13 * Math.PI) * rnd(data.solar, 80);
+        }),
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,.08)',
+        borderWidth: 2,
+        tension: 0.4,
+        fill: true,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  // Precipitation chart
+  makeChart('chartPrecip', {
+    type: 'bar',
+    data: {
+      labels: dayLabels(7),
+      datasets: [{
+        label: 'mm',
+        data: fc.prec.map(p => p / 10), // Convert percentage to mm estimate
+        backgroundColor: 'rgba(59,130,246,.6)',
+        borderRadius: 4,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+}
+
+// ─── WATER QUALITY (SITE-RESPONSIVE) ───
+function buildWaterQuality(){
+  const waterData = {
+    marsala: {
+      ph: 8.12, phStatus: '→ Stable',
+      do: 7.84, doStatus: '↑ +0.2',
+      turbidity: 4.18, turbStatus: '→ Normal',
+      orp: 412, orpStatus: '↑ +8',
+      ec: 1240, ecStatus: '→ Stable',
+      salinity: 35.1, salStatus: '→ Stable'
+    },
+    vendicari: {
+      ph: 8.05, phStatus: '↓ −0.05',
+      do: 8.21, doStatus: '↑ +0.4',
+      turbidity: 3.82, turbStatus: '↓ −0.3',
+      orp: 425, orpStatus: '↑ +12',
+      ec: 1185, ecStatus: '↓ −8',
+      salinity: 34.7, salStatus: '↓ −0.2'
+    },
+    marsaxlokk: {
+      ph: 8.18, phStatus: '↑ +0.1',
+      do: 7.52, doStatus: '→ Stable',
+      turbidity: 5.04, turbStatus: '↑ +0.6',
+      orp: 398, orpStatus: '→ Stable',
+      ec: 1295, ecStatus: '↑ +15',
+      salinity: 35.8, salStatus: '↑ +0.4'
+    }
+  };
+
+  const data = waterData[currentSite] || waterData.marsala;
+
+  document.getElementById('waterMetrics').innerHTML =
+    metricHTML(icons.ph, 'pH', data.ph.toFixed(2), 'pH', data.phStatus, 'st') +
+    metricHTML(icons.ox, 'Dissolved O₂', data.do.toFixed(2), 'mg/L', data.doStatus, data.doStatus.includes('↑') ? 'up' : 'st') +
+    metricHTML(icons.turb, 'Turbidity', data.turbidity.toFixed(2), 'NTU', data.turbStatus, 'st') +
+    metricHTML(icons.ec, 'ORP', data.orp, 'mV', data.orpStatus, data.orpStatus.includes('↑') ? 'up' : 'st') +
+    metricHTML(icons.ec, 'EC', data.ec, 'µS/cm', data.ecStatus, 'st') +
+    metricHTML(icons.drop, 'Salinity', data.salinity.toFixed(1), 'ppt', data.salStatus, 'st');
+
+  makeChart('chartPhDo', {
+    type: 'line',
+    data: {
+      labels: timeLabels(24),
+      datasets: [
+        {label: 'pH', data: Array.from({length: 24}, () => rnd(data.ph, 0.25)), borderColor: '#22d3ee', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0},
+        {label: 'DO mg/L', data: Array.from({length: 24}, () => rnd(data.do, 0.4)), borderColor: '#10b981', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0, yAxisID: 'y1'}
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode: 'index'},
+      plugins: {legend: {labels: {boxWidth: 12}}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: false, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}},
+        y1: {position: 'right', beginAtZero: false, grid: {display: false}}
+      }
+    }
+  });
+
+  makeChart('chartEcSal', {
+    type: 'line',
+    data: {
+      labels: timeLabels(24),
+      datasets: [
+        {label: 'EC µS/cm', data: Array.from({length: 24}, () => rnd(data.ec, 60)), borderColor: '#f59e0b', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0},
+        {label: 'Salinity ppt', data: Array.from({length: 24}, () => rnd(data.salinity, 0.3)), borderColor: '#3b82f6', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0, yAxisID: 'y1'}
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode: 'index'},
+      plugins: {legend: {labels: {boxWidth: 12}}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: false, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}},
+        y1: {position: 'right', beginAtZero: false, grid: {display: false}}
+      }
+    }
+  });
+
+  makeChart('chartOrp', {
+    type: 'line',
+    data: {
+      labels: timeLabels(24),
+      datasets: [{
+        label: 'ORP mV',
+        data: Array.from({length: 24}, () => rnd(data.orp, 30)),
+        borderColor: '#a855f7',
+        backgroundColor: 'rgba(168,85,247,.08)',
+        borderWidth: 2,
+        tension: 0.4,
+        fill: true,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: false, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  makeChart('chartAmNi', {
+    type: 'line',
+    data: {
+      labels: timeLabels(24),
+      datasets: [
+        {label: 'Ammonia ppm', data: Array.from({length: 24}, () => rnd(0.8, 0.3)), borderColor: '#f43f5e', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0},
+        {label: 'Nitrite ppm', data: Array.from({length: 24}, () => rnd(0.4, 0.15)), borderColor: '#10b981', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0}
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {labels: {boxWidth: 12}}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  makeChart('chartTurb', {
+    type: 'bar',
+    data: {
+      labels: timeLabels(24),
+      datasets: [{
+        label: 'Turbidity NTU',
+        data: Array.from({length: 24}, () => rnd(data.turbidity, 2.5)),
+        backgroundColor: Array.from({length: 24}, () => {
+          const v = rnd(data.turbidity, 2.5);
+          return v > 8 ? 'rgba(244,63,94,.6)' : v > 6 ? 'rgba(245,158,11,.6)' : 'rgba(34,211,238,.5)';
+        }),
+        borderRadius: 3,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+}
+
+// ─── SOIL (SITE-RESPONSIVE) ───
+function buildSoil(){
+  const soilData = {
+    marsala: {
+      moisture: 58, moistureDelta: '↓ −3%',
+      temp: 21.4, tempDelta: '↑ +0.8°',
+      ec: 1380, ecStatus: '→ Stable',
+      salinity: 2.4, salStatus: '→ Stable',
+      nitrogen: 452, nitrogenDelta: '↑ +12',
+      tension: -42, tensionDelta: '↓ −8',
+      npk: {n: [442, 448, 455, 451, 460, 458, 452], p: [275, 278, 282, 280, 285, 281, 280], k: [510, 518, 522, 515, 525, 520, 518]}
+    },
+    vendicari: {
+      moisture: 52, moistureDelta: '↓ −5%',
+      temp: 20.8, tempDelta: '↑ +0.5°',
+      ec: 1420, ecStatus: '↑ +15',
+      salinity: 2.6, salStatus: '↑ +0.1',
+      nitrogen: 428, nitrogenDelta: '↓ −8',
+      tension: -38, tensionDelta: '↑ +4',
+      npk: {n: [425, 430, 428, 432, 435, 430, 428], p: [265, 268, 270, 269, 272, 268, 265], k: [495, 502, 498, 505, 510, 502, 495]}
+    },
+    marsaxlokk: {
+      moisture: 61, moistureDelta: '↑ +2%',
+      temp: 22.1, tempDelta: '↑ +1.2°',
+      ec: 1340, ecStatus: '↓ −10',
+      salinity: 2.2, salStatus: '→ Stable',
+      nitrogen: 468, nitrogenDelta: '↑ +15',
+      tension: -45, tensionDelta: '↓ −10',
+      npk: {n: [460, 465, 470, 468, 472, 470, 468], p: [290, 293, 295, 292, 298, 295, 290], k: [535, 542, 538, 545, 550, 542, 535]}
+    }
+  };
+
+  const data = soilData[currentSite] || soilData.marsala;
+
+  document.getElementById('soilMetrics').innerHTML =
+    metricHTML(icons.soil, 'Soil Moisture', data.moisture, '%', data.moistureDelta, data.moistureDelta.includes('↓') ? 'dn' : 'up') +
+    metricHTML(icons.temp, 'Soil Temp', data.temp.toFixed(1), '°C', data.tempDelta, 'up') +
+    metricHTML(icons.ec, 'Soil EC', data.ec, 'µS/cm', data.ecStatus, 'st') +
+    metricHTML(icons.drop, 'Soil Salinity', data.salinity.toFixed(1), 'ppt', data.salStatus, 'st') +
+    metricHTML(icons.npk, 'Nitrogen', data.nitrogen, 'mg/kg', data.nitrogenDelta, data.nitrogenDelta.includes('↑') ? 'up' : 'dn') +
+    metricHTML(icons.npk, 'Water Potential', data.tension, 'kPa', data.tensionDelta, 'dn');
+
+  makeChart('chartSoilMT', {
+    type: 'line',
+    data: {
+      labels: timeLabels(24),
+      datasets: [
+        {label: 'Moisture %', data: Array.from({length: 24}, () => rnd(data.moisture, 8)), borderColor: '#14b8a6', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0},
+        {label: 'Temp °C', data: Array.from({length: 24}, () => rnd(data.temp, 2)), borderColor: '#f59e0b', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0, yAxisID: 'y1'}
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode: 'index'},
+      plugins: {legend: {labels: {boxWidth: 12}}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: false, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}},
+        y1: {position: 'right', beginAtZero: false, grid: {display: false}}
+      }
+    }
+  });
+
+  makeChart('chartSoilEC', {
+    type: 'line',
+    data: {
+      labels: timeLabels(24),
+      datasets: [
+        {label: 'EC µS/cm', data: Array.from({length: 24}, () => rnd(data.ec, 80)), borderColor: '#f59e0b', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0},
+        {label: 'Salinity ppt', data: Array.from({length: 24}, () => rnd(data.salinity, 0.3)), borderColor: '#3b82f6', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 0, yAxisID: 'y1'}
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode: 'index'},
+      plugins: {legend: {labels: {boxWidth: 12}}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: false, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}},
+        y1: {position: 'right', beginAtZero: false, grid: {display: false}}
+      }
+    }
+  });
+
+  makeChart('chartNPKTime', {
+    type: 'line',
+    data: {
+      labels: dayLabels(7),
+      datasets: [
+        {label: 'N mg/kg', data: data.npk.n, borderColor: '#10b981', borderWidth: 2, tension: 0.3, pointRadius: 3, fill: false},
+        {label: 'P mg/kg', data: data.npk.p, borderColor: '#f59e0b', borderWidth: 2, tension: 0.3, pointRadius: 3, fill: false},
+        {label: 'K mg/kg', data: data.npk.k, borderColor: '#3b82f6', borderWidth: 2, tension: 0.3, pointRadius: 3, fill: false}
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {labels: {boxWidth: 12}}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: false, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  makeChart('chartTension', {
+    type: 'line',
+    data: {
+      labels: timeLabels(24),
+      datasets: [{
+        label: 'Water Potential kPa',
+        data: Array.from({length: 24}, () => rnd(data.tension, 12)),
+        borderColor: '#f43f5e',
+        backgroundColor: 'rgba(244,63,94,.06)',
+        borderWidth: 2,
+        tension: 0.4,
+        fill: true,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+}
+// ─── CORRELATION (FIXED) ───
+function buildCorrelation(){
+  // Site-specific correlation matrices
+  const matrices = {
+    marsala: [
+      [1, 0.82, -0.41, 0.15, 0.28, -0.35, 0.12],
+      [0.82, 1, -0.55, 0.22, 0.31, -0.42, 0.18],
+      [-0.41, -0.55, 1, -0.28, -0.18, 0.64, -0.22],
+      [0.15, 0.22, -0.28, 1, 0.71, -0.15, 0.42],
+      [0.28, 0.31, -0.18, 0.71, 1, -0.12, 0.35],
+      [-0.35, -0.42, 0.64, -0.15, -0.12, 1, -0.58],
+      [0.12, 0.18, -0.22, 0.42, 0.35, -0.58, 1]
+    ],
+    vendicari: [
+      [1, 0.78, -0.35, 0.22, 0.31, -0.28, 0.18],
+      [0.78, 1, -0.48, 0.18, 0.28, -0.38, 0.22],
+      [-0.35, -0.48, 1, -0.32, -0.22, 0.58, -0.18],
+      [0.22, 0.18, -0.32, 1, 0.68, -0.18, 0.38],
+      [0.31, 0.28, -0.22, 0.68, 1, -0.15, 0.32],
+      [-0.28, -0.38, 0.58, -0.18, -0.15, 1, -0.52],
+      [0.18, 0.22, -0.18, 0.38, 0.32, -0.52, 1]
+    ],
+    marsaxlokk: [
+      [1, 0.75, -0.38, 0.18, 0.25, -0.32, 0.15],
+      [0.75, 1, -0.51, 0.25, 0.35, -0.45, 0.21],
+      [-0.38, -0.51, 1, -0.25, -0.15, 0.61, -0.25],
+      [0.18, 0.25, -0.25, 1, 0.74, -0.12, 0.45],
+      [0.25, 0.35, -0.15, 0.74, 1, -0.18, 0.38],
+      [-0.32, -0.45, 0.61, -0.12, -0.18, 1, -0.55],
+      [0.15, 0.21, -0.25, 0.45, 0.38, -0.55, 1]
+    ]
+  };
+
+  const params = ['pH', 'DO', 'Turb', 'EC', 'Sal', 'Moist', 'Temp'];
+  const matrix = matrices[currentSite] || matrices.marsala;
+
+  function col(v) {
+    if (v >= 0.7) return '#10b981';      // strong positive - green
+    if (v >= 0.4) return '#14b8a6';      // moderate positive - teal  
+    if (v >= 0.1) return '#22d3ee';      // weak positive - cyan
+    if (v >= -0.1) return '#64748b';     // no correlation - gray
+    if (v >= -0.4) return '#f59e0b';     // weak negative - amber
+    if (v >= -0.7) return '#f97316';     // moderate negative - orange
+    return '#ef4444';                     // strong negative - red
+  }
+
+  let html = `<div class="heatmap">`;
+  
+  // Top labels row
+  html += `<div class="hm-top-labels">`;
+  params.forEach(p => {
+    html += `<div class="hm-top-label">${p}</div>`;
+  });
+  html += `</div>`;
+
+  // Data rows
+  params.forEach((p, i) => {
+    html += `<div class="heatmap-row">`;
+    html += `<div class="hm-label">${p}</div>`;
+    matrix[i].forEach((v, j) => {
+      const isDiagonal = i === j;
+      html += `<div class="hm-cell" style="background:${isDiagonal ? '#1e293b' : col(v)};${isDiagonal ? 'font-weight:700;font-size:0.74rem;' : ''}">${v.toFixed(2)}</div>`;
+    });
+    html += `</div>`;
+  });
+  html += `</div>`;
+
+  document.getElementById('heatmapContainer').innerHTML = html;
+
+  // Scatter plots with site-specific data
+  const scatterData = {
+    marsala: {
+      turb: Array.from({length: 30}, () => ({x: rnd(2, 6), y: rnd(5, 12)})),
+      moist: Array.from({length: 30}, () => {const x = rnd(55, 12); return {x, y: -(x * 1.2 + rnd(10, 8))}}),
+      do: Array.from({length: 30}, () => {const x = rnd(22, 4); return {x, y: rnd(11 - x * 0.15, 0.3)}})
+    },
+    vendicari: {
+      turb: Array.from({length: 30}, () => ({x: rnd(1.8, 5), y: rnd(4.5, 10)})),
+      moist: Array.from({length: 30}, () => {const x = rnd(52, 14); return {x, y: -(x * 1.1 + rnd(12, 7))}}),
+      do: Array.from({length: 30}, () => {const x = rnd(21, 5); return {x, y: rnd(10.5 - x * 0.14, 0.4)}})
+    },
+    marsaxlokk: {
+      turb: Array.from({length: 30}, () => ({x: rnd(2.2, 5.5), y: rnd(5.5, 11)})),
+      moist: Array.from({length: 30}, () => {const x = rnd(58, 10); return {x, y: -(x * 1.15 + rnd(9, 8))}}),
+      do: Array.from({length: 30}, () => {const x = rnd(23, 3.5); return {x, y: rnd(11.5 - x * 0.16, 0.35)}})
+    }
+  };
+
+  const data = scatterData[currentSite] || scatterData.marsala;
+
+  makeChart('chartCorr1', {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Turbidity vs Rainfall',
+        data: data.turb,
+        backgroundColor: 'rgba(34, 211, 238, 0.5)',
+        pointRadius: 4,
+        borderColor: '#22d3ee',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {title: {display: true, text: 'Rainfall mm'}, grid: {display: false}},
+        y: {title: {display: true, text: 'Turbidity NTU'}, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  makeChart('chartCorr2', {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Moisture vs Potential',
+        data: data.moist,
+        backgroundColor: 'rgba(20, 184, 166, 0.5)',
+        pointRadius: 4,
+        borderColor: '#14b8a6',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {title: {display: true, text: 'Soil Moisture %'}, grid: {display: false}},
+        y: {title: {display: true, text: 'Water Potential kPa'}, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  makeChart('chartCorr3', {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'DO vs Temperature',
+        data: data.do,
+        backgroundColor: 'rgba(16, 185, 129, 0.5)',
+        pointRadius: 4,
+        borderColor: '#10b981',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {title: {display: true, text: 'Temperature °C'}, grid: {display: false}},
+        y: {title: {display: true, text: 'Dissolved O₂ mg/L'}, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+}
+
+// ─── ALERTS ───
+function buildAlerts(){
+  const alerts=[
+    {id:1,param:'Turbidity',site:'Marsala A3',val:'12.4 NTU',thresh:'10 NTU',sev:'high',time:'12 min ago',status:'Open'},
+    {id:2,param:'Soil Moisture',site:'Vendicari B1',val:'28 %',thresh:'35 %',sev:'med',time:'1h 22m ago',status:'Open'},
+    {id:3,param:'pH',site:'Marsaxlokk C2',val:'7.2',thresh:'7.5',sev:'med',time:'3h ago',status:'Open'},
+    {id:4,param:'DO',site:'Marsala A1',val:'5.1 mg/L',thresh:'6.0 mg/L',sev:'high',time:'5h ago',status:'Resolved'},
+    {id:5,param:'Wind Speed',site:'Vendicari',val:'42 km/h',thresh:'35 km/h',sev:'low',time:'1d ago',status:'Resolved'},
+  ];
+  document.getElementById('alertsTable').innerHTML=`<table><thead><tr><th>Parameter</th><th>Site</th><th>Value</th><th>Threshold</th><th>Severity</th><th>Time</th><th>Status</th></tr></thead><tbody>`+alerts.map(a=>`<tr><td>${a.param}</td><td>${a.site}</td><td>${a.val}</td><td>${a.thresh}</td><td><span class="sev-${a.sev}" style="padding:2px 8px;border-radius:5px;font-size:.75rem">${a.sev.toUpperCase()}</span></td><td>${a.time}</td><td class="${a.status==='Open'?'status-warn':'status-on'}">${a.status}</td></tr>`).join('')+`</tbody></table>`;
+
+  const thresholds=[
+    {param:'pH',min:'7.0',max:'9.0',unit:'pH',active:true},
+    {param:'Turbidity',min:'0',max:'10',unit:'NTU',active:true},
+    {param:'Dissolved O₂',min:'6.0',max:'12.0',unit:'mg/L',active:true},
+    {param:'Soil Moisture',min:'35',max:'80',unit:'%',active:true},
+    {param:'Water Temp',min:'15',max:'28',unit:'°C',active:true},
+    {param:'Wind Speed',min:'0',max:'35',unit:'km/h',active:false},
+    {param:'Salinity',min:'30',max:'40',unit:'ppt',active:true},
+    {param:'EC',min:'800',max:'2000',unit:'µS/cm',active:true},
+    {param:'ORP',min:'200',max:'600',unit:'mV',active:true},
+    {param:'Ammonia',min:'0',max:'1.0',unit:'ppm',active:true},
+  ];
+  document.getElementById('thresholdTable').innerHTML=`<table><thead><tr><th>Parameter</th><th>Min</th><th>Max</th><th>Unit</th><th>Active</th></tr></thead><tbody>`+thresholds.map(t=>`<tr><td>${t.param}</td><td>${t.min}</td><td>${t.max}</td><td>${t.unit}</td><td><div class="toggle ${t.active?'on':''}" onclick="this.classList.toggle('on')"></div></td></tr>`).join('')+`</tbody></table>`;
+
+  makeChart('chartAlertSummary',{type:'doughnut',data:{labels:['High','Medium','Low','Resolved'],datasets:[{data:[2,2,1,2],backgroundColor:['#f43f5e','#f59e0b','#14b8a6','#10b981'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}}}});
+}
+
+// ─── PREDICTIONS (SITE-RESPONSIVE) ───
+function buildPredictions(){
+  const predData = {
+    marsala: {
+      waterNeed: 'High',
+      vegHealth: 85,
+      riskScore: 3.2,
+      confidence: 91,
+      waterForecast: [420, 380, 510, 680, 590, 340, 290],
+      waterActual: [410, 395, null, null, null, null, null],
+      healthForecast: [86, 84, 85, 82, 88, 87, 91],
+      recommendations: [
+        {title: 'Irrigation Schedule', desc: 'Increase irrigation by 15% for Zone B — soil moisture trending below threshold. Predicted deficit: 42L/ha over next 48h.', color: 'var(--blue)'},
+        {title: 'Nutrient Alert', desc: 'Phosphorus levels dropping. Consider fertiliser application within 72h. Current: 265 mg/kg, target: 280 mg/kg.', color: 'var(--amber)'},
+        {title: 'Disease Risk — Low', desc: 'All vegetation health indices above 80%. No immediate pest or disease risk detected.', color: 'var(--green)'}
+      ]
+    },
+    vendicari: {
+      waterNeed: 'Critical',
+      vegHealth: 78,
+      riskScore: 5.8,
+      confidence: 88,
+      waterForecast: [520, 480, 620, 780, 690, 440, 380],
+      waterActual: [510, 495, null, null, null, null, null],
+      healthForecast: [79, 77, 78, 75, 80, 79, 83],
+      recommendations: [
+        {title: 'Urgent Irrigation Required', desc: 'Soil moisture critically low across Zones A-C. Immediate irrigation needed: 85L/ha within 24h.', color: 'var(--red)'},
+        {title: 'Nitrogen Deficiency', desc: 'Nitrogen levels 12% below optimal. Apply nitrogen-rich fertiliser within 48h.', color: 'var(--amber)'},
+        {title: 'Heat Stress Risk', desc: 'Temperature forecast + low moisture = high heat stress risk. Monitor closely next 72h.', color: 'var(--amber)'}
+      ]
+    },
+    marsaxlokk: {
+      waterNeed: 'Moderate',
+      vegHealth: 92,
+      riskScore: 2.1,
+      confidence: 94,
+      waterForecast: [360, 320, 450, 580, 510, 290, 240],
+      waterActual: [355, 335, null, null, null, null, null],
+      healthForecast: [93, 91, 92, 89, 94, 93, 96],
+      recommendations: [
+        {title: 'Optimal Conditions', desc: 'All parameters within optimal ranges. Current irrigation schedule is effective.', color: 'var(--green)'},
+        {title: 'Maintain Nutrient Balance', desc: 'NPK levels excellent. Continue current fertilisation schedule without changes.', color: 'var(--green)'},
+        {title: 'Storm Watch', desc: 'Forecast shows 45mm precipitation day 5. Reduce irrigation 72h prior to avoid waterlogging.', color: 'var(--blue)'}
+      ]
+    }
+  };
+
+  const data = predData[currentSite] || predData.marsala;
+
+  document.getElementById('predMetrics').innerHTML =
+    metricHTML(icons.ai, 'Water Need', data.waterNeed, '', 'Next 48h irrigation recommended', 'up') +
+    metricHTML(icons.ai, 'Veg Health', data.vegHealth, '%', 'Stable across zones', 'up') +
+    metricHTML(icons.alert, 'Risk Score', data.riskScore.toFixed(1), '/10', 'Low risk — normal conditions', 'up') +
+    metricHTML(icons.ai, 'Confidence', data.confidence, '%', 'Model accuracy', 'up');
+
+  makeChart('chartPredWater', {
+    type: 'line',
+    data: {
+      labels: dayLabels(7),
+      datasets: [
+        {label: 'Predicted Need L/ha', data: data.waterForecast, borderColor: '#3b82f6', borderWidth: 2, tension: 0.3, fill: true, backgroundColor: 'rgba(59,130,246,.08)', pointRadius: 3},
+        {label: 'Actual', data: data.waterActual, borderColor: '#10b981', borderWidth: 2, tension: 0.3, fill: false, pointRadius: 3, borderDash: [5, 3]}
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {labels: {boxWidth: 12}}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  makeChart('chartPredVeg', {
+    type: 'line',
+    data: {
+      labels: dayLabels(7),
+      datasets: [{
+        label: 'Health Index %',
+        data: data.healthForecast,
+        borderColor: '#10b981',
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true,
+        backgroundColor: 'rgba(16,185,129,.08)',
+        pointRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: false, max: 100, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  document.getElementById('aiRecommendations').innerHTML = data.recommendations.map(r => 
+    `<div style="padding:1rem;background:var(--bg2);border:1px solid var(--border);border-left:3px solid ${r.color};border-radius:8px">
+      <div style="font-weight:700;font-size:.88rem;margin-bottom:.3rem">${r.title}</div>
+      <div style="font-size:.8rem;color:var(--t1);line-height:1.55">${r.desc}</div>
+    </div>`
+  ).join('');
+}
+
+// ─── SENSOR TABLE ───
+function buildSensorTable(){
+  const sensors=[
+    {id:'WS-01',type:'Weather Station',model:'METOS5 PESSL',site:'Marsala','status':'online',battery:'84%',last:'2 min'},
+    {id:'SOIL-01',type:'Soil 7-in-1',model:'NPK+Moisture+EC',site:'Marsala','status':'online',battery:'72%',last:'30 sec'},
+    {id:'SOIL-02',type:'Soil 7-in-1',model:'NPK+Moisture+EC',site:'Vendicari','status':'online',battery:'61%',last:'30 sec'},
+    {id:'SOIL-03',type:'Soil 7-in-1',model:'NPK+Moisture+EC',site:'Marsaxlokk','status':'online',battery:'88%',last:'1 min'},
+    {id:'TENS-01',type:'Soil Tension',model:'Water Potential',site:'Marsala','status':'online',battery:'56%',last:'30 sec'},
+    {id:'WQ-01',type:'Water 5-in-1',model:'pH/EC/Sal/TDS/T',site:'Marsala','status':'online',battery:'45%',last:'15 sec'},
+    {id:'WQ-02',type:'Water 5-in-1',model:'pH/EC/Sal/TDS/T',site:'Vendicari','status':'warning',battery:'18%',last:'2 min'},
+    {id:'WQ-03',type:'Water 5-in-1',model:'pH/EC/Sal/TDS/T',site:'Marsaxlokk','status':'online',battery:'91%',last:'20 sec'},
+    {id:'DO-01',type:'Dissolved O₂',model:'Optical Fluor.',site:'Marsala','status':'online',battery:'67%',last:'10 sec'},
+    {id:'DO-02',type:'Dissolved O₂',model:'Optical Fluor.',site:'Vendicari','status':'online',battery:'74%',last:'10 sec'},
+    {id:'TURB-01',type:'Turbidity',model:'SS Optical',site:'Marsala','status':'online',battery:'52%',last:'15 sec'},
+    {id:'TURB-02',type:'Turbidity',model:'SS Optical',site:'Marsaxlokk','status':'offline',battery:'0%',last:'4h'},
+    {id:'AM-01',type:'Ammonia',model:'Electrochem.',site:'Marsala','status':'online',battery:'43%',last:'1 min'},
+    {id:'NI-01',type:'Nitrite',model:'Electrochem.',site:'Vendicari','status':'online',battery:'38%',last:'1 min'},
+  ];
+  document.getElementById('sensorTable').innerHTML=`<table><thead><tr><th>ID</th><th>Type</th><th>Model</th><th>Site</th><th>Status</th><th>Battery</th><th>Last Reading</th><th>Action</th></tr></thead><tbody>`+sensors.map(s=>`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:.75rem">${s.id}</td><td>${s.type}</td><td style="color:var(--t2)">${s.model}</td><td>${s.site}</td><td class="status-${s.status==='online'?'on':s.status==='warning'?'warn':'off'}">${s.status}</td><td>${s.battery}</td><td style="color:var(--t2)">${s.last}</td><td><button class="btn btn-sm">Config</button></td></tr>`).join('')+`</tbody></table>`;
+}
+
+// ─── UPLOAD QUEUE ───
+function buildUploadQueue(){
+  const queue=[
+    {name:'Marsala_20250128.tif',status:'processed',pct:100,type:'Posidonia'},
+    {name:'Vendicari_20250115.tif',status:'processed',pct:100,type:'Posidonia'},
+    {name:'Marsaxlokk_20250120.tif',status:'processing',pct:67,type:'Turbidity'},
+  ];
+  document.getElementById('processingQueue').innerHTML=queue.map(q=>`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:.75rem .85rem">
+    <div style="display:flex;justify-content:space-between;margin-bottom:.4rem"><span style="font-size:.8rem;font-weight:600">${q.name}</span><span style="font-size:.72rem;color:var(--t2)">${q.type}</span></div>
+    <div style="width:100%;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden"><div style="height:100%;width:${q.pct}%;background:${q.status==='processed'?'var(--green)':'var(--cyan)'};border-radius:2px;transition:width .3s"></div></div>
+    <div style="font-size:.72rem;color:${q.status==='processed'?'var(--green)':'var(--cyan)'};margin-top:.3rem;font-weight:600">${q.status==='processed'?'Complete':'Processing — '+q.pct+'%'}</div>
+  </div>`).join('');
+
+  // upload drag & drop
+  const area=document.getElementById('uploadArea');
+  const input=document.getElementById('fileInput');
+  area.addEventListener('click',()=>input.click());
+  area.addEventListener('dragover',e=>{e.preventDefault();area.classList.add('drag-over')});
+  area.addEventListener('dragleave',()=>area.classList.remove('drag-over'));
+  area.addEventListener('drop',e=>{e.preventDefault();area.classList.remove('drag-over');});
+}
+
+// ─── USER TABLE ───
+// ─── USER TABLE (REALISTIC RANDOM USERS) ───
+function buildUserTable(){
+  const users = [
+    {name: 'Dr. Maria Constantinou', email: 'm.constantinou@uom.edu.mt', role: 'Admin', site: 'All Sites', status: 'Active', joined: '2024-08-15'},
+    {name: 'Prof. Giuseppe Falcone', email: 'g.falcone@unipa.it', role: 'Admin', site: 'All Sites', status: 'Active', joined: '2024-08-20'},
+    {name: 'Dr. Sophie Laurent', email: 's.laurent@quasar-tech.eu', role: 'Partner', site: 'All Sites', status: 'Active', joined: '2024-09-05'},
+    {name: 'Ing. Antonio Rizzo', email: 'a.rizzo@comune.marsala.gov.it', site: 'Marsala', role: 'Partner', status: 'Active', joined: '2024-09-22'},
+    {name: 'Dr. James Caruana', email: 'j.caruana@era.org.mt', site: 'Marsaxlokk', role: 'Partner', status: 'Active', joined: '2024-10-08'},
+    {name: 'Dott. Francesca Vitale', email: 'f.vitale@regione.sicilia.it', site: 'Vendicari', role: 'Partner', status: 'Active', joined: '2024-10-18'},
+    {name: 'Dr. Thomas Weber', email: 't.weber@eurofish.org', site: 'All Sites', role: 'Partner', status: 'Active', joined: '2024-11-02'},
+    {name: 'Researcher Observer', email: '—', role: 'Public', site: 'Marsala', status: 'Active', joined: '—'},
+    {name: 'Community Monitor', email: '—', role: 'Public', site: 'Vendicari', status: 'Active', joined: '—'},
+  ];
+  
+  document.getElementById('userTable').innerHTML = `<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Site Access</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead><tbody>` + 
+    users.map(u => `<tr>
+      <td style="font-weight:600">${u.name}</td>
+      <td style="color:var(--t2);font-size:.8rem">${u.email}</td>
+      <td><span style="padding:2px 8px;border-radius:5px;font-size:.75rem;background:${u.role==='Admin'?'var(--cyan2)':u.role==='Partner'?'rgba(59,130,246,.12)':'var(--bg3)'};color:${u.role==='Admin'?'var(--cyan)':u.role==='Partner'?'var(--blue)':'var(--t2)'}">${u.role}</span></td>
+      <td style="color:var(--t2)">${u.site}</td>
+      <td class="status-on">${u.status}</td>
+      <td style="color:var(--t2);font-size:.78rem">${u.joined}</td>
+      <td><button class="btn btn-sm">Edit</button></td>
+    </tr>`).join('') + `</tbody></table>`;
+}
+</script>
+</body>
+</html>
