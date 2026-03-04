@@ -174,10 +174,19 @@
               <div class="card-head"><span class="card-title">Water Quality — 24h</span><span class="card-badge">Live</span></div>
               <div class="chart-box"><canvas id="chartWater24"></canvas></div>
             </div>
-            <div class="card c4">
-              <div class="card-head"><span class="card-title">Live Data Stream</span><span class="card-badge">Live</span></div>
-              <div class="stream" id="liveStream"></div>
-            </div>
+             <div class="card c4">
+  <div class="card-head">
+    <span class="card-title">Site Location</span>
+    <span class="card-badge">Live</span>
+  </div>
+  <div id="siteMap" style="width:100%;height:280px;border-radius:10px;overflow:hidden;background:var(--bg2);position:relative">
+    <!-- Map will be inserted here by JavaScript -->
+  </div>
+  <div style="margin-top:12px;display:flex;justify-content:space-between;font-size:.78rem;color:var(--t2)">
+    <span id="mapCoords">Coordinates</span>
+    <span id="mapSiteName">Site Name</span>
+  </div>
+</div>
           </div>
           <div class="g12 mt2">
             <div class="card c4">
@@ -987,7 +996,54 @@ function buildOverview(){
     }
   });
 }
-// ─── SATELLITE (SITE-RESPONSIVE) ───
+// ─── SATELLITE (SITE-RESPONSIVE) ───  
+  // ─── SITE LOCATION MAP ───
+function updateSiteMap() {
+  const siteData = {
+    marsala: {
+      name: 'Stagnone di Marsala',
+      coords: '37.8063°N, 12.4366°E',
+      lat: 37.8063,
+      lon: 12.4366,
+      zoom: 13
+    },
+    vendicari: {
+      name: 'Riserva Naturale di Vendicari',
+      coords: '36.8333°N, 15.0983°E',
+      lat: 36.8333,
+      lon: 15.0983,
+      zoom: 13
+    },
+    marsaxlokk: {
+      name: 'Marsaxlokk',
+      coords: '35.8419°N, 14.5467°E',
+      lat: 35.8419,
+      lon: 14.5467,
+      zoom: 14
+    }
+  };
+
+  const site = siteData[currentSite] || siteData.marsala;
+  
+  // Update text info
+  document.getElementById('mapCoords').textContent = site.coords;
+  document.getElementById('mapSiteName').textContent = site.name;
+  
+  // Create map using OpenStreetMap (free, no API key needed)
+  const mapContainer = document.getElementById('siteMap');
+  mapContainer.innerHTML = `
+    <iframe 
+      width="100%" 
+      height="100%" 
+      frameborder="0" 
+      scrolling="no" 
+      marginheight="0" 
+      marginwidth="0" 
+      src="https://www.openstreetmap.org/export/embed.html?bbox=${site.lon-0.02},${site.lat-0.02},${site.lon+0.02},${site.lat+0.02}&layer=mapnik&marker=${site.lat},${site.lon}"
+      style="border:1px solid var(--border);border-radius:10px">
+    </iframe>
+  `;
+}
 function buildSatellite(){
   const satData = {
     marsala: {
@@ -1940,3 +1996,4 @@ function buildUserTable(){
 </body>
 
 </html>
+
