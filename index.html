@@ -861,6 +861,7 @@ function tickMetrics(){
 // PAGE BUILDERS
 // ═══════════════════════════════════════════   
 // ─── SATELLITE (SITE & TYPE RESPONSIVE) ───
+// ─── SATELLITE (SITE & TYPE RESPONSIVE) ───
 function buildSatellite(){
   const satData = {
     marsala: {
@@ -981,7 +982,7 @@ function handleSatTypeChange() {
 function loadSatelliteMap() {
   const type = document.getElementById('satType').value;
   
-  // Images are in the same folder as the HTML file
+  // Build image path: /{site}-{type}.jpg
   const imagePath = `${currentSite}-${type}.jpg`;
   
   // Map type descriptions
@@ -990,9 +991,9 @@ function loadSatelliteMap() {
     turbidity: 'NDWI / True Color Analysis'
   };
   
-  // Set image source (add timestamp to force reload)
+  // Set image source
   const img = document.getElementById('satImg');
-  img.src = imagePath + '?t=' + Date.now();
+  img.src = imagePath;
   
   // Update label
   const label = type === 'posidonia' ? 'Posidonia Oceanica Health Map' : 'Turbidity Distribution Map';
@@ -1010,7 +1011,7 @@ function loadSatelliteMap() {
   
   // Handle image error (if file doesn't exist)
   img.onerror = function() {
-    alert(`Image not found: ${imagePath}\n\nPlease ensure the file exists in the same folder as your HTML file.`);
+    alert(`Image not found: ${imagePath}\n\nPlease ensure the file exists in: client/public/images/satellite/`);
     img.style.opacity = '1';
   };
 }
