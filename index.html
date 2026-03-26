@@ -227,7 +227,15 @@
                   <span class="tag">Cloud Cover: &lt;5%</span>
                   <span class="tag">Bands: 13 MSI</span>
                   <span class="tag">Last: 2025-01-28</span>
-                </div>
+                </div>   
+                <button class="btn btn-primary" onclick="loadSatelliteMap()" style="margin-top:1rem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Load Satellite Map
+        </button>
               </div>
             </div>
             <div class="card c4">
@@ -851,7 +859,167 @@ function tickMetrics(){
 
 // ═══════════════════════════════════════════
 // PAGE BUILDERS
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════   
+// ─── SATELLITE (SITE & TYPE RESPONSIVE) ───
+function buildSatellite(){
+  const satData = {
+    marsala: {
+      coverage: 'Stagnone di Marsala',
+      acquired: '2025-01-28 09:41 UTC',
+      cloudCover: '4.7%',
+      zones: [87, 72, 91, 65, 84],
+      turbDist: [18, 34, 28, 14, 6]
+    },
+    vendicari: {
+      coverage: 'Riserva Naturale di Vendicari',
+      acquired: '2025-01-26 10:15 UTC',
+      cloudCover: '3.2%',
+      zones: [92, 85, 88, 78, 90],
+      turbDist: [24, 38, 26, 10, 2]
+    },
+    marsaxlokk: {
+      coverage: 'Marsaxlokk',
+      acquired: '2025-01-27 09:52 UTC',
+      cloudCover: '6.1%',
+      zones: [78, 68, 82, 70, 76],
+      turbDist: [14, 30, 32, 18, 6]
+    }
+  };
+
+  const data = satData[currentSite] || satData.marsala;
+
+  const meta = [
+    {k: 'Platform', v: 'Sentinel-2A / 2B'},
+    {k: 'Resolution', v: '10m (B02, B03, B04, B08)'},
+    {k: 'Bands', v: '13 spectral MSI'},
+    {k: 'Acquired', v: data.acquired},
+    {k: 'Processing', v: 'SIMBAD v3.2'},
+    {k: 'Cloud Cover', v: data.cloudCover},
+    {k: 'Coverage', v: data.coverage},
+    {k: 'Output', v: document.getElementById('satType').value === 'posidonia' ? 'Posidonia Oceanica Map' : 'Turbidity Map'},
+  ];
+
+  document.getElementById('satMeta').innerHTML = meta.map(m => 
+    `<div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:.78rem;color:var(--t2);font-weight:600">${m.k}</span>
+      <span style="font-size:.78rem;font-weight:500">${m.v}</span>
+    </div>`
+  ).join('');
+
+  // Update tags in placeholder
+  document.getElementById('cloudTag').textContent = `Cloud Cover: ${data.cloudCover}`;
+  document.getElementById('lastTag').textContent = `Last: ${data.acquired.split(' ')[0]}`;
+
+  // Update map type dropdown handler
+  document.getElementById('satType').removeEventListener('change', handleSatTypeChange);
+  document.getElementById('satType').addEventListener('change', handleSatTypeChange);
+
+  // Reset to placeholder when site changes
+  hideSatMap();
+
+  // Update charts
+  makeChart('chartSatZones', {
+    type: 'bar',
+    data: {
+      labels: ['Zone A', 'Zone B', 'Zone C', 'Zone D', 'Zone E'],
+      datasets: [{
+        label: 'Coverage %',
+        data: data.zones,
+        backgroundColor: data.zones.map(v => v > 85 ? '#10b981' : v > 70 ? '#f59e0b' : '#f43f5e'),
+        borderRadius: 5,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, max: 100, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  makeChart('chartTurbDist', {
+    type: 'bar',
+    data: {
+      labels: ['0-2', '2-5', '5-10', '10-20', '20+'],
+      datasets: [{
+        label: 'NTU Range',
+        data: data.turbDist,
+        backgroundColor: ['#10b981', '#10b981', '#f59e0b', '#f43f5e', '#f43f5e'],
+        borderRadius: 5,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+}
+
+// ─── SATELLITE MAP TYPE CHANGE HANDLER ───
+function handleSatTypeChange() {
+  const type = document.getElementById('satType').value;
+  const title = type === 'posidonia' ? 'Posidonia Oceanica Map' : 'Turbidity Map';
+  document.getElementById('satTitle').textContent = title;
+  
+  // If map is currently displayed, update it
+  if (document.getElementById('satRealImage').style.display === 'block') {
+    loadSatelliteMap();
+  }
+}
+
+// ─── LOAD SATELLITE MAP (LOCAL IMAGES) ───
+function loadSatelliteMap() {
+  const type = document.getElementById('satType').value;
+  
+  // Build image path: {site}-{type}.jpg
+  const imagePath = `${currentSite}-${type}.jpg`;
+  
+  // Map type descriptions
+  const descriptions = {
+    posidonia: 'False Color / NDVI Analysis',
+    turbidity: 'NDWI / True Color Analysis'
+  };
+  
+  // Set image source
+  const img = document.getElementById('satImg');
+  img.src = imagePath;
+  
+  // Update label
+  const label = type === 'posidonia' ? 'Posidonia Oceanica Health Map' : 'Turbidity Distribution Map';
+  document.getElementById('mapLabel').innerHTML = `${label}<br><span style="font-size:.7rem;opacity:.8">${descriptions[type]}</span>`;
+  
+  // Show loading state
+  img.style.opacity = '0.3';
+  
+  // Handle image load
+  img.onload = function() {
+    img.style.opacity = '1';
+    document.getElementById('satPlaceholder').style.display = 'none';
+    document.getElementById('satRealImage').style.display = 'block';
+  };
+  
+  // Handle image error (if file doesn't exist)
+  img.onerror = function() {
+    alert(`Image not found: ${imagePath}\n\nPlease ensure the file exists in: client/public/images/satellite/`);
+    img.style.opacity = '1';
+  };
+}
+
+// ─── HIDE SATELLITE MAP ───
+function hideSatMap() {
+  document.getElementById('satPlaceholder').style.display = 'flex';
+  document.getElementById('satRealImage').style.display = 'none';
+}
 
 // ─── OVERVIEW (SITE-RESPONSIVE) ───
 function buildOverview(){
