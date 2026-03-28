@@ -218,26 +218,31 @@
           <div class="g12">
             <div class="card c8">
               <div class="card-head"><span class="card-title" id="satTitle">Posidonia Oceanica Map</span><span class="card-badge">SIMBAD</span></div>
-              <div class="sat-placeholder">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                <div class="sat-label">Sentinel-2 Processed Image</div>
-                <div class="sat-sub">Image processed by SIMBAD platform. Awaiting latest acquisition or upload.</div>
-                <div class="sat-meta">
-                  <span class="tag">Resolution: 10m</span>
-                  <span class="tag">Cloud Cover: &lt;5%</span>
-                  <span class="tag">Bands: 13 MSI</span>
-                  <span class="tag">Last: 2025-01-28</span>
-                </div>   
-          <button class="btn btn-primary" onclick="loadSatelliteMap()" style="margin-top:1rem">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-    <polyline points="7 10 12 15 17 10"/>
-    <line x1="12" y1="15" x2="12" y2="3"/>
-  </svg>
-  Load Satellite Map
-</button>
-              </div>
-            </div>
+       <div class="sat-placeholder" id="satPlaceholder">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+  <div class="sat-label" id="mapLabel">Sentinel-2 Processed Image</div>
+  <div class="sat-sub">Image processed by SIMBAD platform. Awaiting latest acquisition or upload.</div>
+  <div class="sat-meta">
+    <span class="tag" id="resolutionTag">Resolution: 10m</span>
+    <span class="tag" id="cloudTag">Cloud Cover: &lt;5%</span>
+    <span class="tag" id="bandsTag">Bands: 13 MSI</span>
+    <span class="tag" id="lastTag">Last: 2025-01-28</span>
+  </div>   
+  <button class="btn btn-primary" onclick="loadSatelliteMap()" style="margin-top:1rem">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Load Satellite Map
+  </button>
+</div>  </div>
+
+<!-- This is the image container (hidden by default) -->
+<div id="satRealImage" style="display:none;width:100%;height:100%;position:relative;border-radius:10px;overflow:hidden;">
+  <img id="satImg" src="" alt="Satellite Map" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+  <div style="position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,0.7);color:#fff;padding:6px 12px;border-radius:6px;font-size:0.75rem;" id="satOverlayLabel">Posidonia Map</div>
+</div>
             <div class="card c4">
               <div class="card-head"><span class="card-title">Image Metadata</span></div>
               <div style="display:flex;flex-direction:column;gap:.55rem" id="satMeta">
@@ -967,37 +972,43 @@ function buildSatellite(){
 }
 
 // ─── SATELLITE MAP TYPE CHANGE HANDLER ───
+// ─── SATELLITE MAP TYPE CHANGE HANDLER ───
 function handleSatTypeChange() {
   const type = document.getElementById('satType').value;
   const title = type === 'posidonia' ? 'Posidonia Oceanica Map' : 'Turbidity Map';
   document.getElementById('satTitle').textContent = title;
   
-  // If map is currently displayed, update it
-  if (document.getElementById('satRealImage').style.display === 'block') {
-    loadSatelliteMap();
+  // Reset to placeholder when type changes
+  hideSatMap();
+  
+  // Update metadata output field
+  const metaOutput = document.querySelector('#satMeta div:last-child span:last-child');
+  if (metaOutput) {
+    metaOutput.textContent = title;
   }
 }
 
 // ─── LOAD SATELLITE MAP (LOCAL IMAGES) ───
+// ─── LOAD SATELLITE MAP (LOCAL IMAGES) ───
 function loadSatelliteMap() {
   const type = document.getElementById('satType').value;
+  const site = currentSite;
   
-  // Build image path: /{site}-{type}.jpg
-  const imagePath = `${currentSite}-${type}.jpg`;
+  // Build image path: {site}-{type}.jpg
+  const imagePath = `${site}-${type}.jpg`;
   
   // Map type descriptions
   const descriptions = {
-    posidonia: 'False Color / NDVI Analysis',
-    turbidity: 'NDWI / True Color Analysis'
+    posidonia: 'Posidonia Oceanica Health Map',
+    turbidity: 'Turbidity Distribution Map'
   };
   
   // Set image source
   const img = document.getElementById('satImg');
   img.src = imagePath;
   
-  // Update label
-  const label = type === 'posidonia' ? 'Posidonia Oceanica Health Map' : 'Turbidity Distribution Map';
-  document.getElementById('mapLabel').innerHTML = `${label}<br><span style="font-size:.7rem;opacity:.8">${descriptions[type]}</span>`;
+  // Update labels
+  document.getElementById('satOverlayLabel').textContent = descriptions[type];
   
   // Show loading state
   img.style.opacity = '0.3';
@@ -1011,7 +1022,7 @@ function loadSatelliteMap() {
   
   // Handle image error (if file doesn't exist)
   img.onerror = function() {
-    alert(`Image not found: ${imagePath}\n\nPlease ensure the file exists in: client/public/images/satellite/`);
+    alert(`Image not found: ${imagePath}\n\nPlease ensure the file exists in your project folder.`);
     img.style.opacity = '1';
   };
 }
@@ -1020,6 +1031,7 @@ function loadSatelliteMap() {
 function hideSatMap() {
   document.getElementById('satPlaceholder').style.display = 'flex';
   document.getElementById('satRealImage').style.display = 'none';
+  document.getElementById('satImg').src = '';
 }
 
 // ─── OVERVIEW (SITE-RESPONSIVE) ───
