@@ -205,63 +205,68 @@
         </div>
 
         <!-- ═══ SATELLITE ═══ -->
-        <div class="page" id="page-satellite">
-          <div class="section-head">
-            <div><h2>Satellite Imaging</h2><p>SIMBAD processed Sentinel-2 imagery</p></div>
-            <div class="section-head-right">
-              <select id="satType" style="padding:.42rem .75rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:.82rem;font-family:inherit;cursor:pointer">
-                <option value="posidonia">Posidonia Oceanica Map</option>
-                <option value="turbidity">Turbidity Map</option>
-              </select>
-            </div>
-          </div>
-          <div class="g12">
-            <div class="card c8">
-              <div class="card-head"><span class="card-title" id="satTitle">Posidonia Oceanica Map</span><span class="card-badge">SIMBAD</span></div>
-       <div class="sat-placeholder" id="satPlaceholder">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-  <div class="sat-label" id="mapLabel">Sentinel-2 Processed Image</div>
-  <div class="sat-sub">Image processed by SIMBAD platform. Awaiting latest acquisition or upload.</div>
-  <div class="sat-meta">
-    <span class="tag" id="resolutionTag">Resolution: 10m</span>
-    <span class="tag" id="cloudTag">Cloud Cover: &lt;5%</span>
-    <span class="tag" id="bandsTag">Bands: 13 MSI</span>
-    <span class="tag" id="lastTag">Last: 2025-01-28</span>
-  </div>   
-  <button class="btn btn-primary" onclick="loadSatelliteMap()" style="margin-top:1rem">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-      <polyline points="7 10 12 15 17 10"/>
-      <line x1="12" y1="15" x2="12" y2="3"/>
-    </svg>
-    Load Satellite Map
-  </button>
-</div>  </div>
+ <!-- ═══ SATELLITE ═══ -->
+<div class="page" id="page-satellite">
+  <div class="section-head">
+    <div><h2>Satellite Imaging</h2><p>SIMBAD processed Sentinel-2 imagery</p></div>
+    <div class="section-head-right">
+      <select id="satType" style="padding:.42rem .75rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:.82rem;font-family:inherit;cursor:pointer">
+        <option value="posidonia">Posidonia Oceanica Map</option>
+        <option value="turbidity">Turbidity Map</option>
+      </select>
+    </div>
+  </div>
+  <div class="g12">
+    <div class="card c8">
+      <div class="card-head"><span class="card-title" id="satTitle">Posidonia Oceanica Map</span><span class="card-badge">SIMBAD</span></div>
+      
+      <!-- PLACEHOLDER STATE -->
+      <div class="sat-placeholder" id="satPlaceholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div class="sat-label">Sentinel-2 Processed Image</div>
+        <div class="sat-sub">Image processed by SIMBAD platform. Awaiting latest acquisition or upload.</div>
+        <div class="sat-meta">
+          <span class="tag" id="resolutionTag">Resolution: 10m</span>
+          <span class="tag" id="cloudTag">Cloud Cover: &lt;5%</span>
+          <span class="tag" id="bandsTag">Bands: 13 MSI</span>
+          <span class="tag" id="lastTag">Last: 2025-01-28</span>
+        </div>   
+        <button class="btn btn-primary" onclick="loadSatelliteMap()" style="margin-top:1rem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Load Satellite Map
+        </button>
+      </div>
 
-<!-- This is the image container (hidden by default) -->
-<div id="satRealImage" style="display:none;width:100%;height:100%;position:relative;border-radius:10px;overflow:hidden;">
-  <img id="satImg" src="" alt="Satellite Map" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
-  <div style="position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,0.7);color:#fff;padding:6px 12px;border-radius:6px;font-size:0.75rem;" id="satOverlayLabel">Posidonia Map</div>
+      <!-- IMAGE STATE (hidden by default) -->
+      <div id="satRealImage" style="display:none;width:100%;height:400px;position:relative;border-radius:10px;overflow:hidden;background:var(--bg2);">
+        <img id="satImg" src="" alt="Satellite Map" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+        <div style="position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,0.75);color:#fff;padding:6px 12px;border-radius:6px;font-size:0.75rem;font-weight:500;" id="satOverlayLabel">Posidonia Map</div>
+      </div>
+      
+    </div>
+    <div class="card c4">
+      <div class="card-head"><span class="card-title">Image Metadata</span></div>
+      <div style="display:flex;flex-direction:column;gap:.55rem" id="satMeta">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+  <!-- health index bar -->
+  <div class="g12 mt2">
+    <div class="card c6">
+      <div class="card-head"><span class="card-title">Posidonia Coverage by Zone</span></div>
+      <div class="chart-box"><canvas id="chartSatZones"></canvas></div>
+    </div>
+    <div class="card c6">
+      <div class="card-head"><span class="card-title">Turbidity Distribution</span></div>
+      <div class="chart-box"><canvas id="chartTurbDist"></canvas></div>
+    </div>
+  </div>
 </div>
-            <div class="card c4">
-              <div class="card-head"><span class="card-title">Image Metadata</span></div>
-              <div style="display:flex;flex-direction:column;gap:.55rem" id="satMeta">
-                <!-- populated by JS -->
-              </div>
-            </div>
-          </div>
-          <!-- health index bar -->
-          <div class="g12 mt2">
-            <div class="card c6">
-              <div class="card-head"><span class="card-title">Posidonia Coverage by Zone</span></div>
-              <div class="chart-box"><canvas id="chartSatZones"></canvas></div>
-            </div>
-            <div class="card c6">
-              <div class="card-head"><span class="card-title">Turbidity Distribution</span></div>
-              <div class="chart-box"><canvas id="chartTurbDist"></canvas></div>
-            </div>
-          </div>
-        </div>
 
         <!-- ═══ WEATHER ═══ -->
         <div class="page" id="page-weather">
@@ -973,29 +978,16 @@ function buildSatellite(){
 
 // ─── SATELLITE MAP TYPE CHANGE HANDLER ───
 // ─── SATELLITE MAP TYPE CHANGE HANDLER ───
-function handleSatTypeChange() {
-  const type = document.getElementById('satType').value;
-  const title = type === 'posidonia' ? 'Posidonia Oceanica Map' : 'Turbidity Map';
-  document.getElementById('satTitle').textContent = title;
-  
-  // Reset to placeholder when type changes
-  hideSatMap();
-  
-  // Update metadata output field
-  const metaOutput = document.querySelector('#satMeta div:last-child span:last-child');
-  if (metaOutput) {
-    metaOutput.textContent = title;
-  }
-}
 
+
+// ─── LOAD SATELLITE MAP (LOCAL IMAGES) ───
 // ─── LOAD SATELLITE MAP (LOCAL IMAGES) ───
 // ─── LOAD SATELLITE MAP (LOCAL IMAGES) ───
 function loadSatelliteMap() {
   const type = document.getElementById('satType').value;
-  const site = currentSite;
   
   // Build image path: {site}-{type}.jpg
-  const imagePath = `${site}-${type}.jpg`;
+  const imagePath = `${currentSite}-${type}.jpg`;
   
   // Map type descriptions
   const descriptions = {
@@ -1007,7 +999,7 @@ function loadSatelliteMap() {
   const img = document.getElementById('satImg');
   img.src = imagePath;
   
-  // Update labels
+  // Update overlay label
   document.getElementById('satOverlayLabel').textContent = descriptions[type];
   
   // Show loading state
@@ -1020,7 +1012,7 @@ function loadSatelliteMap() {
     document.getElementById('satRealImage').style.display = 'block';
   };
   
-  // Handle image error (if file doesn't exist)
+  // Handle image error
   img.onerror = function() {
     alert(`Image not found: ${imagePath}\n\nPlease ensure the file exists in your project folder.`);
     img.style.opacity = '1';
@@ -1034,6 +1026,121 @@ function hideSatMap() {
   document.getElementById('satImg').src = '';
 }
 
+// ─── SATELLITE MAP TYPE CHANGE HANDLER ───
+function handleSatTypeChange() {
+  const type = document.getElementById('satType').value;
+  const title = type === 'posidonia' ? 'Posidonia Oceanica Map' : 'Turbidity Map';
+  document.getElementById('satTitle').textContent = title;
+  
+  // Reset to placeholder when type changes - this forces user to click Load again
+  hideSatMap();
+}
+
+// ─── SATELLITE (SITE & TYPE RESPONSIVE) ───
+function buildSatellite(){
+  const satData = {
+    marsala: {
+      coverage: 'Stagnone di Marsala',
+      acquired: '2025-01-28 09:41 UTC',
+      cloudCover: '4.7%',
+      zones: [87, 72, 91, 65, 84],
+      turbDist: [18, 34, 28, 14, 6]
+    },
+    vendicari: {
+      coverage: 'Riserva Naturale di Vendicari',
+      acquired: '2025-01-26 10:15 UTC',
+      cloudCover: '3.2%',
+      zones: [92, 85, 88, 78, 90],
+      turbDist: [24, 38, 26, 10, 2]
+    },
+    marsaxlokk: {
+      coverage: 'Marsaxlokk',
+      acquired: '2025-01-27 09:52 UTC',
+      cloudCover: '6.1%',
+      zones: [78, 68, 82, 70, 76],
+      turbDist: [14, 30, 32, 18, 6]
+    }
+  };
+
+  const data = satData[currentSite] || satData.marsala;
+
+  const meta = [
+    {k: 'Platform', v: 'Sentinel-2A / 2B'},
+    {k: 'Resolution', v: '10m (B02, B03, B04, B08)'},
+    {k: 'Bands', v: '13 spectral MSI'},
+    {k: 'Acquired', v: data.acquired},
+    {k: 'Processing', v: 'SIMBAD v3.2'},
+    {k: 'Cloud Cover', v: data.cloudCover},
+    {k: 'Coverage', v: data.coverage},
+    {k: 'Output', v: document.getElementById('satType').value === 'posidonia' ? 'Posidonia Oceanica Map' : 'Turbidity Map'},
+  ];
+
+  document.getElementById('satMeta').innerHTML = meta.map(m => 
+    `<div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:.78rem;color:var(--t2);font-weight:600">${m.k}</span>
+      <span style="font-size:.78rem;font-weight:500">${m.v}</span>
+    </div>`
+  ).join('');
+
+  // Update tags in placeholder
+  document.getElementById('cloudTag').textContent = `Cloud Cover: ${data.cloudCover}`;
+  document.getElementById('lastTag').textContent = `Last: ${data.acquired.split(' ')[0]}`;
+
+  // Update map type dropdown handler
+  const satTypeEl = document.getElementById('satType');
+  satTypeEl.removeEventListener('change', handleSatTypeChange);
+  satTypeEl.addEventListener('change', handleSatTypeChange);
+
+  // Reset to placeholder when site changes
+  hideSatMap();
+
+  // Update charts
+  makeChart('chartSatZones', {
+    type: 'bar',
+    data: {
+      labels: ['Zone A', 'Zone B', 'Zone C', 'Zone D', 'Zone E'],
+      datasets: [{
+        label: 'Coverage %',
+        data: data.zones,
+        backgroundColor: data.zones.map(v => v > 85 ? '#10b981' : v > 70 ? '#f59e0b' : '#f43f5e'),
+        borderRadius: 5,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, max: 100, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+
+  makeChart('chartTurbDist', {
+    type: 'bar',
+    data: {
+      labels: ['0-2', '2-5', '5-10', '10-20', '20+'],
+      datasets: [{
+        label: 'NTU Range',
+        data: data.turbDist,
+        backgroundColor: ['#10b981', '#10b981', '#f59e0b', '#f43f5e', '#f43f5e'],
+        borderRadius: 5,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {
+        x: {grid: {display: false}},
+        y: {beginAtZero: true, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
+      }
+    }
+  });
+}
 // ─── OVERVIEW (SITE-RESPONSIVE) ───
 function buildOverview(){
   // Site-specific data
@@ -1225,101 +1332,6 @@ function updateSiteMap() {
       style="border:1px solid var(--border);border-radius:10px">
     </iframe>
   `;
-}
-function buildSatellite(){
-  const satData = {
-    marsala: {
-      coverage: 'Stagnone di Marsala',
-      acquired: '2025-01-28 09:41 UTC',
-      cloudCover: '4.7%',
-      zones: [87, 72, 91, 65, 84],
-      turbDist: [18, 34, 28, 14, 6]
-    },
-    vendicari: {
-      coverage: 'Riserva Naturale di Vendicari',
-      acquired: '2025-01-26 10:15 UTC',
-      cloudCover: '3.2%',
-      zones: [92, 85, 88, 78, 90],
-      turbDist: [24, 38, 26, 10, 2]
-    },
-    marsaxlokk: {
-      coverage: 'Marsaxlokk',
-      acquired: '2025-01-27 09:52 UTC',
-      cloudCover: '6.1%',
-      zones: [78, 68, 82, 70, 76],
-      turbDist: [14, 30, 32, 18, 6]
-    }
-  };
-
-  const data = satData[currentSite] || satData.marsala;
-
-  const meta = [
-    {k: 'Platform', v: 'Sentinel-2A / 2B'},
-    {k: 'Resolution', v: '10m (B02, B03, B04, B08)'},
-    {k: 'Bands', v: '13 spectral MSI'},
-    {k: 'Acquired', v: data.acquired},
-    {k: 'Processing', v: 'SIMBAD v3.2'},
-    {k: 'Cloud Cover', v: data.cloudCover},
-    {k: 'Coverage', v: data.coverage},
-    {k: 'Output', v: 'Posidonia Oceanica Map'},
-  ];
-
-  document.getElementById('satMeta').innerHTML = meta.map(m => 
-    `<div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border)">
-      <span style="font-size:.78rem;color:var(--t2);font-weight:600">${m.k}</span>
-      <span style="font-size:.78rem;font-weight:500">${m.v}</span>
-    </div>`
-  ).join('');
-
-  document.getElementById('satType').addEventListener('change', function() {
-    document.getElementById('satTitle').textContent = this.value === 'posidonia' ? 'Posidonia Oceanica Map' : 'Turbidity Map';
-  });
-
-  makeChart('chartSatZones', {
-    type: 'bar',
-    data: {
-      labels: ['Zone A', 'Zone B', 'Zone C', 'Zone D', 'Zone E'],
-      datasets: [{
-        label: 'Coverage %',
-        data: data.zones,
-        backgroundColor: data.zones.map(v => v > 85 ? '#10b981' : v > 70 ? '#f59e0b' : '#f43f5e'),
-        borderRadius: 5,
-        borderWidth: 0
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {legend: {display: false}},
-      scales: {
-        x: {grid: {display: false}},
-        y: {beginAtZero: true, max: 100, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
-      }
-    }
-  });
-
-  makeChart('chartTurbDist', {
-    type: 'bar',
-    data: {
-      labels: ['0-2', '2-5', '5-10', '10-20', '20+'],
-      datasets: [{
-        label: 'NTU Range',
-        data: data.turbDist,
-        backgroundColor: ['#10b981', '#10b981', '#f59e0b', '#f43f5e', '#f43f5e'],
-        borderRadius: 5,
-        borderWidth: 0
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {legend: {display: false}},
-      scales: {
-        x: {grid: {display: false}},
-        y: {beginAtZero: true, grid: {color: tv('rgba(34,211,238,.08)', 'rgba(8,145,178,.1)')}}
-      }
-    }
-  });
 }
 
 // ─── WEATHER (SITE-RESPONSIVE) ───
