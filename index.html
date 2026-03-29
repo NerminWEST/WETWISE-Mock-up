@@ -983,6 +983,7 @@ function buildSatellite(){
 // ─── LOAD SATELLITE MAP (LOCAL IMAGES) ───
 // ─── LOAD SATELLITE MAP (LOCAL IMAGES) ───
 // ─── LOAD SATELLITE MAP (LOCAL IMAGES) ───
+// ─── LOAD SATELLITE MAP (LOCAL IMAGES) ───
 function loadSatelliteMap() {
   const type = document.getElementById('satType').value;
   
@@ -995,9 +996,12 @@ function loadSatelliteMap() {
     turbidity: 'Turbidity Distribution Map'
   };
   
-  // Set image source
+  // Get elements
   const img = document.getElementById('satImg');
-  img.src = imagePath;
+  
+  // Remove old handlers first to prevent stale callbacks
+  img.onerror = null;
+  img.onload = null;
   
   // Update overlay label
   document.getElementById('satOverlayLabel').textContent = descriptions[type];
@@ -1005,25 +1009,35 @@ function loadSatelliteMap() {
   // Show loading state
   img.style.opacity = '0.3';
   
-  // Handle image load
+  // Set up new handlers
   img.onload = function() {
     img.style.opacity = '1';
     document.getElementById('satPlaceholder').style.display = 'none';
     document.getElementById('satRealImage').style.display = 'block';
   };
   
-  // Handle image error
   img.onerror = function() {
-    alert(`Image not found: ${imagePath}\n\nPlease ensure the file exists in your project folder.`);
-    img.style.opacity = '1';
+    // Silent fail - don't alert
+    console.error('Image not found:', imagePath);
   };
+  
+  // Set src last
+  img.src = imagePath;
 }
 
 // ─── HIDE SATELLITE MAP ───
 function hideSatMap() {
+  const img = document.getElementById('satImg');
+  
+  if (img) {
+    // CRITICAL: Remove handlers BEFORE clearing src
+    img.onerror = null;
+    img.onload = null;
+    img.src = ''; 
+  }
+  
   document.getElementById('satPlaceholder').style.display = 'flex';
   document.getElementById('satRealImage').style.display = 'none';
-  document.getElementById('satImg').src = '';
 }
 
 // ─── SATELLITE MAP TYPE CHANGE HANDLER ───
